@@ -87,11 +87,11 @@ export default function Dashboards({ role, userEmail, onLogout }) {
 
   if (error) {
     return (
-      <div className="p-6 max-w-lg mx-auto bg-red-50 border border-red-200 rounded-2xl text-center space-y-4 shadow-elevation-1">
+      <div className="max-w-lg mx-auto bg-white rounded-xl shadow-sm border border-red-200 p-6 text-center space-y-4">
         <AlertTriangle className="w-12 h-12 text-red-600 mx-auto" />
         <h3 className="text-lg font-bold text-red-800">System Connection Error</h3>
         <p className="text-sm text-red-700 font-medium">{error}</p>
-        <button onClick={reloadData} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-bold shadow-elevation-1">
+        <button onClick={reloadData} className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-bold shadow-sm">
           Retry Sync
         </button>
       </div>
@@ -107,7 +107,7 @@ export default function Dashboards({ role, userEmail, onLogout }) {
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -20, scale: 0.95 }}
-            className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-elevation-3 border flex items-center gap-3 ${
+            className={`fixed top-4 right-4 z-50 p-4 rounded-xl shadow-lg border flex items-center gap-3 ${
               toast.type === 'success' ? 'bg-green-50 border-green-200 text-green-900' : 'bg-red-50 border-red-200 text-red-900'
             }`}
           >
@@ -118,7 +118,7 @@ export default function Dashboards({ role, userEmail, onLogout }) {
       </AnimatePresence>
 
       {/* Top Welcome Bar */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4 md:space-y-0">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4 md:space-y-0">
         <div>
           <h2 className="text-xl font-bold text-on-surface flex items-center gap-2">
             <span className="p-2 rounded-xl bg-primary-container text-on-primary-container">
@@ -135,7 +135,7 @@ export default function Dashboards({ role, userEmail, onLogout }) {
         <div className="flex items-center gap-2">
           <button 
             onClick={reloadData} 
-            className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant transition active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-gray-50 hover:bg-gray-50-high border border-gray-100 transition active:scale-95"
           >
             <RefreshCw className="w-3.5 h-3.5" /> Synchronize Sheets
           </button>
@@ -426,7 +426,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
   return (
     <div className="space-y-6">
       {/* Tab Navigation */}
-      <div className="flex border-b border-outline-variant space-x-2 md:space-x-4 overflow-x-auto pb-1">
+      <div className="flex border-b border-gray-100 space-x-2 md:space-x-4 overflow-x-auto pb-1">
         {[
           { id: 'fleet', label: 'Fleet Map & Shifts', icon: MapPin },
           { id: 'approvals', label: 'Double-Gate Console', icon: CheckCircle },
@@ -474,11 +474,11 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                   return (
                     <div 
                       key={a.asset_id}
-                      className={`p-5 rounded-2xl border transition relative overflow-hidden ${
+                      className={`bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition relative overflow-hidden ${
                         isGrounded 
                           ? 'bg-red-50/70 border-red-200' 
-                          : 'bg-white/80 border-outline-variant shadow-elevation-1'
-                      } hover:shadow-elevation-2`}
+                          : 'bg-white/80 border-gray-100 shadow-sm'
+                      } hover:shadow-md`}
                     >
                       {isGrounded && (
                         <div className="absolute top-0 right-0 bg-red-600 text-white font-extrabold text-[9px] uppercase px-3 py-0.5 rounded-bl">Grounded Warning</div>
@@ -492,7 +492,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                         {getStatusBadge(a.live_status)}
                       </div>
                       
-                      <div className="mt-4 pt-3 border-t border-dashed border-outline-variant grid grid-cols-2 gap-2 text-xs">
+                      <div className="mt-4 pt-3 border-t border-dashed border-gray-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
                         <div>
                           <span className="text-textMuted font-medium">Site Location:</span>
                           <p className="font-extrabold text-on-surface flex items-center gap-1 mt-0.5">
@@ -535,8 +535,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
             <div className="space-y-6">
               
               {/* Gate 1: Requisitions to RFQ Authorizations */}
-              <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4 border-b pb-4 border-dashed border-outline-variant">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4 border-b pb-4 border-dashed border-gray-100">
                   <div>
                     <h3 className="text-base font-extrabold text-on-surface flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
@@ -551,9 +551,9 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                   {prRequests.filter(p => p.status === 'Checked').map(pr => {
                     const aiRec = getGeminiRecommendation(pr.item_generic_name);
                     return (
-                      <div key={pr.pr_id} className="p-4 rounded-xl border border-outline-variant bg-surface-container/30 grid grid-cols-1 lg:grid-cols-3 gap-4">
+                      <div key={pr.pr_id} className="p-4 rounded-xl border border-gray-100 bg-gray-50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         <div className="lg:col-span-2 space-y-2 text-xs">
-                          <div className="flex items-center justify-between border-b pb-1.5 border-dashed border-outline-variant">
+                          <div className="flex items-center justify-between border-b pb-1.5 border-dashed border-gray-100">
                             <div>
                               <span className="font-bold text-primary block text-sm">{pr.pr_id}</span>
                               <h4 className="text-sm font-extrabold text-on-surface mt-0.5">{pr.item_generic_name}</h4>
@@ -561,7 +561,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                             {getStatusBadge(pr.status)}
                           </div>
                           
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-2">
                             <div>
                               <span className="text-textMuted block">Target Asset Link:</span>
                               <span className="font-bold text-on-surface">{pr.target_use}</span>
@@ -575,7 +575,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                               <span className="font-semibold text-on-surface italic">{pr.requested_by_email}</span>
                             </div>
                           </div>
-                          <div className="p-2 rounded bg-surface-container-low border text-textMuted italic mt-1">
+                          <div className="p-2 rounded bg-gray-50 border text-textMuted italic mt-1">
                             Justification: "{pr.justification}"
                           </div>
                         </div>
@@ -593,7 +593,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                           
                           <button 
                             onClick={() => handleAuthorizeRFQ(pr.pr_id)}
-                            className="w-full py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-xs font-bold transition shadow-elevation-1 flex items-center justify-center gap-1 active:scale-95"
+                            className="w-full py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center gap-1 active:scale-95"
                           >
                             <Check className="w-3.5 h-3.5" /> Authorize RFQ & Advance
                           </button>
@@ -608,8 +608,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
               </div>
 
               {/* Gate 2: Executive Sourcing Selection */}
-              <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1">
-                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4 border-b pb-4 border-dashed border-outline-variant">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-4 border-b pb-4 border-dashed border-gray-100">
                   <div>
                     <h3 className="text-base font-extrabold text-on-surface flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-pulse"></span>
@@ -627,8 +627,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                     const historicalBaseline = prices.length > 0 ? Math.min(...prices) : 0;
 
                     return (
-                      <div key={pr.pr_id} className="p-4 rounded-xl bg-surface-container/30 border border-outline-variant space-y-4">
-                        <div className="flex flex-col md:flex-row md:justify-between md:items-start border-b border-dashed border-outline-variant pb-3 gap-2">
+                      <div key={pr.pr_id} className="p-4 rounded-xl bg-gray-50 border border-gray-100 space-y-4">
+                        <div className="flex flex-col md:flex-row md:justify-between md:items-start border-b border-dashed border-gray-100 pb-3 gap-2">
                           <div>
                             <span className="text-xs font-extrabold text-primary">{pr.pr_id}</span>
                             <h4 className="text-sm font-extrabold text-on-surface mt-0.5">{pr.item_generic_name}</h4>
@@ -654,10 +654,10 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                             return (
                               <div
                                 key={idx}
-                                className={`p-4 rounded-xl border flex flex-col justify-between space-y-3 relative overflow-hidden transition hover:shadow-elevation-2 ${
+                                className={`p-4 rounded-xl border flex flex-col justify-between space-y-3 relative overflow-hidden transition hover:shadow-md ${
                                   isBestPrice
-                                    ? 'bg-green-50/80 border-green-300 shadow-elevation-1'
-                                    : 'bg-white border-outline-variant'
+                                    ? 'bg-green-50/80 border-green-300 shadow-sm'
+                                    : 'bg-white border-gray-100'
                                 }`}
                               >
                                 {isBestPrice && (
@@ -670,7 +670,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                                   <span className="text-textMuted italic block text-[10px]">{q.extracted_sku_name}</span>
                                   <span className="text-textMuted block text-[10px]">Quote date: {q.quote_date}</span>
                                 </div>
-                                <div className="space-y-1.5 text-xs border-t border-dashed border-outline-variant pt-2">
+                                <div className="space-y-1.5 text-xs border-t border-dashed border-gray-100 pt-2">
                                   <div className="flex justify-between items-center">
                                     <span className="text-textMuted font-medium">Unit Price:</span>
                                     <span className="font-extrabold text-on-surface">MVR {newPrice.toLocaleString()}</span>
@@ -698,7 +698,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                                 </div>
                                 <button
                                   onClick={() => handleAuthorizePO(pr.pr_id, q.supplier_name, q.quoted_price_mvr)}
-                                  className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-elevation-1 flex items-center justify-center gap-1 active:scale-95"
+                                  className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition shadow-sm flex items-center justify-center gap-1 active:scale-95"
                                 >
                                   <CheckCircle className="w-3.5 h-3.5" /> Select & Raise PO
                                 </button>
@@ -723,25 +723,25 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
 
           {/* TAB 3: FINANCE & CRM RENTAL MATRIX */}
           {activeTab === 'finance' && (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               
               {/* CRM lease logs */}
-              <div className="lg:col-span-2 p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-                <div className="flex justify-between items-center border-b pb-4 border-dashed border-outline-variant">
+              <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+                <div className="flex justify-between items-center border-b pb-4 border-dashed border-gray-100">
                   <div>
                     <h3 className="text-base font-extrabold text-on-surface">CRM Sales & Multi-Asset Rental Ledger</h3>
                     <p className="text-xs text-textMuted mt-1">Logs contract agreements, active asset bindings, billing meter cycles, and GST calculations.</p>
                   </div>
                   <button 
                     onClick={() => setShowAddRA(!showAddRA)}
-                    className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-primary hover:bg-primary-dark text-white transition shadow-elevation-1 active:scale-95"
+                    className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold rounded-xl bg-primary hover:bg-primary-dark text-white transition shadow-sm active:scale-95"
                   >
                     <Plus className="w-3.5 h-3.5" /> Log Contract
                   </button>
                 </div>
 
                 {showAddRA && (
-                  <div className="p-4 rounded-xl bg-surface-container border border-outline-variant grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div className="p-4 rounded-xl bg-gray-50 border border-gray-100 grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                     <div className="col-span-2 font-bold border-b pb-1 text-primary">Log CRM Client Agreement</div>
                     <div>
                       <label className="font-semibold block mb-1">Client Business Name</label>
@@ -796,7 +796,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                       </button>
                       <button 
                         onClick={handleCreateAgreement}
-                        className="px-3.5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-lg font-bold shadow-elevation-1"
+                        className="px-3.5 py-2.5 bg-primary hover:bg-primary-dark text-white rounded-lg font-bold shadow-sm"
                       >
                         Save Contract
                       </button>
@@ -820,7 +820,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                     const grandTotal = subtotal + gstAmount;
 
                     return (
-                      <div key={ra.agreement_id} className="p-4 rounded-2xl border border-outline-variant bg-surface-container/20 space-y-2">
+                      <div key={ra.agreement_id} className="p-4 rounded-xl border border-gray-100 bg-gray-50 space-y-2">
                         <div className="flex justify-between items-start">
                           <div>
                             <span className="text-xs font-bold text-primary block">{ra.agreement_id}</span>
@@ -830,7 +830,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                         </div>
                         <p className="text-xs text-textMuted font-medium">{ra.rate_structure}</p>
                         
-                        <div className="pt-3 border-t border-dashed border-outline-variant grid grid-cols-3 gap-2 text-xs mt-2">
+                        <div className="pt-3 border-t border-dashed border-gray-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-xs mt-2">
                           <div>
                             <span className="text-textMuted block font-medium">Bound Fleet Assets:</span>
                             <span className="font-extrabold text-primary">{ra.asset_ids_array}</span>
@@ -846,7 +846,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                         </div>
 
                         {rateVal > 0 && (
-                          <div className="p-3 rounded-xl bg-surface-container-low border border-outline-variant mt-3 flex flex-col md:flex-row md:justify-between text-xs space-y-2 md:space-y-0">
+                          <div className="p-3 rounded-xl bg-gray-50 border border-gray-100 mt-3 flex flex-col md:flex-row md:justify-between text-xs space-y-2 md:space-y-0">
                             <div>
                               <span className="text-textMuted font-medium">Subtotal Billed:</span>
                               <span className="font-bold text-on-surface ml-1">MVR {subtotal.toLocaleString()}</span>
@@ -868,8 +868,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
               </div>
 
               {/* Finance Ledger */}
-              <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-                <div className="border-b pb-4 border-dashed border-outline-variant">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+                <div className="border-b pb-4 border-dashed border-gray-100">
                   <h3 className="text-base font-extrabold text-on-surface">Accounts Payable & Receivables</h3>
                   <p className="text-xs text-textMuted mt-1">Monitors payment pipelines and active corporate billing receipts.</p>
                 </div>
@@ -878,7 +878,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                   {normalizedFinance.map(f => {
                     const isPayable = f.ledger_type === 'PROCUREMENT_EXPENSE';
                     return (
-                      <div key={f.transaction_id} className="p-3.5 rounded-xl border border-outline-variant bg-surface-container/30 flex justify-between items-center text-xs shadow-elevation-1">
+                      <div key={f.transaction_id} className="p-3.5 rounded-xl border border-gray-100 bg-gray-50 flex justify-between items-center text-xs shadow-sm">
                         <div className="space-y-1">
                           <span className="font-extrabold text-primary block">{f.transaction_id}</span>
                           <span className="text-textMuted font-medium block">Reference: {f.reference_id}</span>
@@ -906,8 +906,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
           {activeTab === 'reports' && (
             <div className="space-y-6">
               {/* 4 Metric Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-5 bg-white/80 rounded-2xl border border-outline-variant shadow-elevation-1 space-y-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-2">
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] uppercase font-extrabold text-textMuted tracking-wider">Total Corporate Spend</span>
                     <DollarSign className="w-4 h-4 text-primary" />
@@ -915,7 +915,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                   <p className="text-2xl font-extrabold text-on-surface">MVR {totalSpend.toLocaleString()}</p>
                   <p className="text-[10px] text-textMuted font-medium">{finance.length} ledger transactions</p>
                 </div>
-                <div className="p-5 bg-white/80 rounded-2xl border border-outline-variant shadow-elevation-1 space-y-2">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-2">
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] uppercase font-extrabold text-textMuted tracking-wider">GST 8% Breakdown</span>
                     <Percent className="w-4 h-4 text-secondary" />
@@ -923,7 +923,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                   <p className="text-2xl font-extrabold text-on-surface">MVR {gstBreakdown.toLocaleString()}</p>
                   <p className="text-[10px] text-textMuted font-medium">Maldives GST rate across portfolio</p>
                 </div>
-                <div className="p-5 bg-white/80 rounded-2xl border border-outline-variant shadow-elevation-1 space-y-2">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-2">
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] uppercase font-extrabold text-textMuted tracking-wider">Completed Requisitions</span>
                     <TrendingUp className="w-4 h-4 text-emerald-600" />
@@ -931,7 +931,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                   <p className="text-2xl font-extrabold text-on-surface">{completedPRs}</p>
                   <p className="text-[10px] text-textMuted font-medium">Fully processed PR tickets this cycle</p>
                 </div>
-                <div className="p-5 bg-white/80 rounded-2xl border border-outline-variant shadow-elevation-1 space-y-2">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-2">
                   <div className="flex justify-between items-start">
                     <span className="text-[10px] uppercase font-extrabold text-textMuted tracking-wider">Active Vendor Pool</span>
                     <BarChart2 className="w-4 h-4 text-amber-600" />
@@ -953,15 +953,15 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
               )}
 
               {/* Net Profit Dashboard + Top Bleeding Assets */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                <div className="lg:col-span-2 p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-                  <div className="border-b pb-3 border-dashed border-outline-variant">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+                  <div className="border-b pb-3 border-dashed border-gray-100">
                     <h3 className="text-base font-extrabold text-on-surface flex items-center gap-2">
                       <TrendingUp className="w-4 h-4 text-emerald-600" /> Net Profit Dashboard
                     </h3>
                     <p className="text-xs text-textMuted mt-0.5">True P&amp;L: Total Active CRM Revenues − Fleet Maintenance Spend</p>
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-center">
                     <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
                       <span className="text-[10px] uppercase font-extrabold text-textMuted tracking-wider block">CRM Revenue</span>
                       <p className="text-xl font-extrabold text-emerald-700 mt-1">MVR {crmRevenue.toLocaleString()}</p>
@@ -986,7 +986,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                       <span>MRO (Preventative): MVR {mroSpend.toLocaleString()}</span>
                     </div>
                     {(oemSpend + mroSpend) > 0 && (
-                      <div className="w-full h-2.5 bg-surface-container rounded-full flex overflow-hidden">
+                      <div className="w-full h-2.5 bg-gray-50 rounded-full flex overflow-hidden">
                         <div className="bg-red-500 h-full transition-all" style={{ width: `${Math.round((oemSpend / (oemSpend + mroSpend)) * 100)}%` }} />
                         <div className="bg-blue-400 h-full transition-all" style={{ width: `${Math.round((mroSpend / (oemSpend + mroSpend)) * 100)}%` }} />
                       </div>
@@ -997,8 +997,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                     </div>
                   </div>
                 </div>
-                <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-                  <div className="border-b pb-3 border-dashed border-outline-variant">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+                  <div className="border-b pb-3 border-dashed border-gray-100">
                     <h3 className="text-base font-extrabold text-on-surface">Top Bleeding Assets</h3>
                     <p className="text-xs text-textMuted mt-0.5">Machinery with highest repair expenditure.</p>
                   </div>
@@ -1006,7 +1006,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                     {top3BleedingAssets.length === 0 ? (
                       <p className="text-xs text-textMuted italic text-center py-4">No asset-linked expenditure data yet.</p>
                     ) : top3BleedingAssets.map(([assetId, spend], idx) => (
-                      <div key={assetId} className="flex justify-between items-center text-xs p-2.5 rounded-xl border border-outline-variant bg-surface-container/30">
+                      <div key={assetId} className="flex justify-between items-center text-xs p-2.5 rounded-xl border border-gray-100 bg-gray-50">
                         <div className="flex items-center gap-2">
                           <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-extrabold text-white ${idx === 0 ? 'bg-red-600' : idx === 1 ? 'bg-orange-500' : 'bg-amber-500'}`}>{idx + 1}</span>
                           <span className="font-extrabold text-on-surface">{assetId}</span>
@@ -1018,10 +1018,10 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Event Stream Timeline */}
-                <div className="lg:col-span-2 p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-                  <div className="border-b pb-4 border-dashed border-outline-variant">
+                <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+                  <div className="border-b pb-4 border-dashed border-gray-100">
                     <h3 className="text-base font-extrabold text-on-surface flex items-center gap-2">
                       <Activity className="w-4 h-4 text-primary" />
                       Asset History Event Stream
@@ -1045,7 +1045,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                             return (
                               <div key={entry.log_id || idx} className="relative">
                                 <div className={`absolute -left-6 top-1.5 w-3 h-3 rounded-full border-2 border-white shadow ${dotColor}`} />
-                                <div className="p-3 rounded-xl border border-outline-variant bg-surface-container/30 space-y-1.5">
+                                <div className="p-3 rounded-xl border border-gray-100 bg-gray-50 space-y-1.5">
                                   <div className="flex justify-between items-start gap-2">
                                     <span className={`text-[10px] font-extrabold uppercase tracking-wider px-2 py-0.5 rounded shrink-0 ${badgeColor}`}>{entry.event_type}</span>
                                     <span className="text-[10px] text-textMuted font-medium whitespace-nowrap">{dateStr} · {timeStr}</span>
@@ -1067,8 +1067,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                 </div>
 
                 {/* Vendor Volume Matrix */}
-                <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-                  <div className="border-b pb-4 border-dashed border-outline-variant">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+                  <div className="border-b pb-4 border-dashed border-gray-100">
                     <h3 className="text-base font-extrabold text-on-surface">Vendor Volume Matrix</h3>
                     <p className="text-xs text-textMuted mt-1">Quote frequency per supplier across all procurement cycles.</p>
                   </div>
@@ -1082,7 +1082,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                             <span className="font-bold text-on-surface truncate max-w-[70%]">{supplier}</span>
                             <span className="font-extrabold text-primary shrink-0">{count} quote{count !== 1 ? 's' : ''}</span>
                           </div>
-                          <div className="w-full bg-surface-container rounded-full h-1.5">
+                          <div className="w-full bg-gray-50 rounded-full h-1.5">
                             <div className="bg-primary rounded-full h-1.5 transition-all duration-500" style={{ width: `${pct}%` }} />
                           </div>
                         </div>
@@ -1121,7 +1121,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                 </div>
 
                 {/* Kanban Pipeline — 4 stage columns */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {stages.map(({ stage, bg, header, dot }) => {
                     const stageAgreements = agreements.filter(a => {
                       const s = a.agreement_status || (a.status === 'Active' ? 'Active Contract' : a.status === 'Pending' ? 'Lead' : 'Lead');
@@ -1129,7 +1129,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                     });
                     const stageValue = stageAgreements.reduce((sum, a) => sum + Number(a.total_contract_value_mvr || 0), 0);
                     return (
-                      <div key={stage} className={`rounded-2xl border ${bg} flex flex-col`}>
+                      <div key={stage} className={`rounded-xl border ${bg} flex flex-col`}>
                         <div className={`p-3 rounded-t-2xl ${header} flex justify-between items-center`}>
                           <div className="flex items-center gap-1.5">
                             <div className={`w-2.5 h-2.5 rounded-full ${dot}`} />
@@ -1149,8 +1149,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                             try { milestones = JSON.parse(agr.billing_milestones || '[]'); } catch(e) {}
                             const paidCount = milestones.filter(m => m.status === 'Paid').length;
                             return (
-                              <div key={agr.agreement_id} className="bg-white rounded-xl border border-outline-variant shadow-elevation-1 overflow-hidden">
-                                <div className="p-3 cursor-pointer hover:bg-surface-container/30 transition" onClick={() => setExpandedContractId(isExpanded ? null : agr.agreement_id)}>
+                              <div key={agr.agreement_id} className="bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+                                <div className="p-3 cursor-pointer hover:bg-gray-50 transition" onClick={() => setExpandedContractId(isExpanded ? null : agr.agreement_id)}>
                                   <div className="flex justify-between items-start">
                                     <span className="text-[9px] font-extrabold text-textMuted uppercase">{agr.agreement_id}</span>
                                     {milestones.length > 0 && <span className="text-[9px] text-textMuted font-bold">{paidCount}/{milestones.length} paid</span>}
@@ -1164,7 +1164,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                                     </div>
                                   )}
                                   {milestones.length > 0 && (
-                                    <div className="mt-1.5 w-full bg-surface-container rounded-full h-1">
+                                    <div className="mt-1.5 w-full bg-gray-50 rounded-full h-1">
                                       <div className="bg-emerald-500 rounded-full h-1 transition-all" style={{ width: `${Math.round((paidCount / milestones.length) * 100)}%` }} />
                                     </div>
                                   )}
@@ -1173,12 +1173,12 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                                   </div>
                                 </div>
                                 {isExpanded && (
-                                  <div className="border-t border-dashed border-outline-variant bg-surface-container/20 p-3 space-y-2">
+                                  <div className="border-t border-dashed border-gray-100 bg-gray-50 p-3 space-y-2">
                                     <span className="text-[9px] uppercase font-extrabold text-textMuted tracking-wider block">Billing Milestones</span>
                                     {milestones.length === 0 ? (
                                       <p className="text-[10px] text-textMuted italic">No milestones defined.</p>
                                     ) : milestones.map((m, mIdx) => (
-                                      <div key={mIdx} className="flex justify-between items-center text-[10px] py-1.5 border-b border-outline-variant last:border-0 gap-2">
+                                      <div key={mIdx} className="flex justify-between items-center text-[10px] py-1.5 border-b border-gray-100 last:border-0 gap-2">
                                         <div className="flex-1 min-w-0">
                                           <p className="font-bold text-on-surface truncate">{m.milestone}</p>
                                           <p className="text-primary font-extrabold">MVR {Number(m.amount_mvr).toLocaleString()}</p>
@@ -1223,10 +1223,10 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* User Registry Inline Edit */}
-                <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-                  <div className="border-b pb-3 border-dashed border-outline-variant">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+                  <div className="border-b pb-3 border-dashed border-gray-100">
                     <h3 className="text-base font-extrabold text-on-surface flex items-center gap-2">
                       <Users className="w-4 h-4 text-primary" /> User Registry Editor
                     </h3>
@@ -1236,7 +1236,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                     {users.map(u => {
                       const isEditing = editingUserEmail === u.email;
                       return (
-                        <div key={u.email} className={`p-3 rounded-xl border text-xs transition ${isEditing ? 'border-primary bg-primary-container/10' : 'border-outline-variant bg-surface-container/30'}`}>
+                        <div key={u.email} className={`p-3 rounded-xl border text-xs transition ${isEditing ? 'border-primary bg-primary-container/10' : 'border-gray-100 bg-gray-50'}`}>
                           {isEditing ? (
                             <div className="space-y-2">
                               <input className="w-full p-2 border rounded-lg bg-white outline-none text-xs" value={userEditBuffer.display_name || ''} onChange={e => setUserEditBuffer(b => ({ ...b, display_name: e.target.value }))} placeholder="Display Name" />
@@ -1261,7 +1261,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                                   <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${u.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>{u.status}</span>
                                 </div>
                               </div>
-                              <button onClick={() => { setEditingUserEmail(u.email); setUserEditBuffer({ ...u }); }} className="p-1.5 rounded-lg border border-outline-variant hover:bg-surface-container transition">
+                              <button onClick={() => { setEditingUserEmail(u.email); setUserEditBuffer({ ...u }); }} className="p-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 transition">
                                 <Edit2 className="w-3.5 h-3.5 text-textMuted" />
                               </button>
                             </div>
@@ -1273,8 +1273,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                 </div>
 
                 {/* Fleet Asset Inline Edit */}
-                <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-                  <div className="border-b pb-3 border-dashed border-outline-variant">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+                  <div className="border-b pb-3 border-dashed border-gray-100">
                     <h3 className="text-base font-extrabold text-on-surface flex items-center gap-2">
                       <Truck className="w-4 h-4 text-primary" /> Fleet Asset Editor
                     </h3>
@@ -1284,7 +1284,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                     {fleetAssets.map(a => {
                       const isEditing = editingAssetId === a.asset_id;
                       return (
-                        <div key={a.asset_id} className={`p-3 rounded-xl border text-xs transition ${isEditing ? 'border-primary bg-primary-container/10' : 'border-outline-variant bg-surface-container/30'}`}>
+                        <div key={a.asset_id} className={`p-3 rounded-xl border text-xs transition ${isEditing ? 'border-primary bg-primary-container/10' : 'border-gray-100 bg-gray-50'}`}>
                           {isEditing ? (
                             <div className="space-y-2">
                               <div className="text-[10px] font-extrabold text-primary">{a.asset_id} — {a.asset_name}</div>
@@ -1303,7 +1303,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                                 <span className="text-[10px] text-primary font-bold block">{a.asset_id}</span>
                                 <span className="text-[10px] text-textMuted">{a.live_status} · {a.location}</span>
                               </div>
-                              <button onClick={() => { setEditingAssetId(a.asset_id); setAssetEditBuffer({ ...a }); }} className="p-1.5 rounded-lg border border-outline-variant hover:bg-surface-container transition">
+                              <button onClick={() => { setEditingAssetId(a.asset_id); setAssetEditBuffer({ ...a }); }} className="p-1.5 rounded-lg border border-gray-100 hover:bg-gray-50 transition">
                                 <Edit2 className="w-3.5 h-3.5 text-textMuted" />
                               </button>
                             </div>
@@ -1316,7 +1316,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
               </div>
 
               {/* Retroactive Backdated PR Tool */}
-              <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-red-200 shadow-elevation-1 space-y-4">
+              <div className="bg-white rounded-xl shadow-sm border border-red-200 p-6 space-y-4">
                 <div className="border-b pb-3 border-dashed border-red-200">
                   <h3 className="text-base font-extrabold text-on-surface flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-red-600" />
@@ -1327,32 +1327,32 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                 <form onSubmit={handleBackfillRetroactivePR} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
                   <div>
                     <label className="font-bold block mb-1">Backdated Date &amp; Time</label>
-                    <input type="datetime-local" value={retroDate} onChange={e => setRetroDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-elevation-1" required />
+                    <input type="datetime-local" value={retroDate} onChange={e => setRetroDate(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-sm" required />
                   </div>
                   <div>
                     <label className="font-bold block mb-1">Item / Spare Part Name</label>
-                    <input type="text" value={retroItem} onChange={e => setRetroItem(e.target.value)} placeholder="e.g. Hydraulic Pump Assembly" className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-elevation-1" required />
+                    <input type="text" value={retroItem} onChange={e => setRetroItem(e.target.value)} placeholder="e.g. Hydraulic Pump Assembly" className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-sm" required />
                   </div>
                   <div>
                     <label className="font-bold block mb-1">Category</label>
-                    <select value={retroCategory} onChange={e => setRetroCategory(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-elevation-1 font-semibold">
+                    <select value={retroCategory} onChange={e => setRetroCategory(e.target.value)} className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-sm font-semibold">
                       {['Consumables / General', 'MRO / General', 'Heavy Machinery Parts', 'Marine Parts', 'Electrical', 'Safety Equipment'].map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="font-bold block mb-1">Target Asset / Base</label>
-                    <input type="text" value={retroAssetBase} onChange={e => setRetroAssetBase(e.target.value)} placeholder="e.g. WL-HV-0008 or Thilafushi" className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-elevation-1" required />
+                    <input type="text" value={retroAssetBase} onChange={e => setRetroAssetBase(e.target.value)} placeholder="e.g. WL-HV-0008 or Thilafushi" className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-sm" required />
                   </div>
                   <div>
                     <label className="font-bold block mb-1">Supplier Name</label>
-                    <input type="text" value={retroSupplier} onChange={e => setRetroSupplier(e.target.value)} placeholder="e.g. Kashimaa Boat" className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-elevation-1" required />
+                    <input type="text" value={retroSupplier} onChange={e => setRetroSupplier(e.target.value)} placeholder="e.g. Kashimaa Boat" className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-sm" required />
                   </div>
                   <div>
                     <label className="font-bold block mb-1">Total Price (MVR)</label>
-                    <input type="number" value={retroPrice} onChange={e => setRetroPrice(e.target.value)} placeholder="e.g. 15000" className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-elevation-1" required />
+                    <input type="number" value={retroPrice} onChange={e => setRetroPrice(e.target.value)} placeholder="e.g. 15000" className="w-full p-2.5 border rounded-xl bg-white outline-none shadow-sm" required />
                   </div>
                   <div className="md:col-span-2 lg:col-span-3 flex justify-end">
-                    <button type="submit" disabled={retroSubmitting} className="px-6 py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-extrabold text-xs transition shadow-elevation-1 flex items-center gap-2 active:scale-95 disabled:opacity-75 uppercase tracking-wider">
+                    <button type="submit" disabled={retroSubmitting} className="px-6 py-3 bg-red-700 hover:bg-red-800 text-white rounded-xl font-extrabold text-xs transition shadow-sm flex items-center gap-2 active:scale-95 disabled:opacity-75 uppercase tracking-wider">
                       {retroSubmitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Terminal className="w-4 h-4" />}
                       Atomic Seed Handshake — Write to 4 Sheets
                     </button>
@@ -1364,8 +1364,8 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
 
           {/* TAB 4: ACCESS RIGHTS CONTROL */}
           {activeTab === 'users' && (
-            <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-              <div className="border-b pb-4 border-dashed border-outline-variant">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+              <div className="border-b pb-4 border-dashed border-gray-100">
                 <h3 className="text-base font-extrabold text-on-surface">Staff Access Authorization Panel</h3>
                 <p className="text-xs text-textMuted mt-1">Elevate user roles instantly or suspend operational accounts to protect data privacy.</p>
               </div>
@@ -1373,7 +1373,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-outline-variant bg-surface-container/60">
+                    <tr className="border-b border-gray-100 bg-gray-50">
                       <th className="p-3 text-xs font-extrabold uppercase text-textMuted tracking-wider">Staff Display Name</th>
                       <th className="p-3 text-xs font-extrabold uppercase text-textMuted tracking-wider">Email Profile ID</th>
                       <th className="p-3 text-xs font-extrabold uppercase text-textMuted tracking-wider">Assigned Role Authority</th>
@@ -1383,14 +1383,14 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                   </thead>
                   <tbody>
                     {users.map(u => (
-                      <tr key={u.email} className="border-b border-outline-variant hover:bg-surface-container-low transition">
+                      <tr key={u.email} className="border-b border-gray-100 odd:bg-white even:bg-gray-50/50 hover:bg-emerald-50/40 transition">
                         <td className="p-3 font-extrabold text-on-surface">{u.display_name}</td>
                         <td className="p-3 text-primary font-semibold italic">{u.email}</td>
                         <td className="p-3 font-semibold">
                           <select 
                             value={u.role}
                             onChange={e => handleUserRoleChange(u.email, e.target.value)}
-                            className="p-2 border border-outline-variant rounded-lg bg-white text-xs font-bold outline-none"
+                            className="p-2 border border-gray-100 rounded-lg bg-white text-xs font-bold outline-none"
                           >
                             <option value="Admin">Admin</option>
                             <option value="Procurement">Procurement</option>
@@ -1403,7 +1403,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                           <select 
                             value={u.status}
                             onChange={e => handleUserStatusChange(u.email, e.target.value)}
-                            className="p-2 border border-outline-variant rounded-lg bg-white text-xs font-bold outline-none"
+                            className="p-2 border border-gray-100 rounded-lg bg-white text-xs font-bold outline-none"
                           >
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
@@ -1413,7 +1413,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                         <td className="p-3 text-right">
                           <button 
                             onClick={() => handleUserStatusChange(u.email, u.status === 'Active' ? 'Inactive' : 'Active')}
-                            className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition border shadow-elevation-1 active:scale-95 ${
+                            className={`px-3.5 py-1.5 text-xs font-bold rounded-lg transition border shadow-sm active:scale-95 ${
                               u.status === 'Active' 
                                 ? 'bg-red-50 text-red-700 hover:bg-red-100 border-red-200' 
                                 : 'bg-green-50 text-green-700 hover:bg-green-100 border-green-200'
@@ -1575,7 +1575,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
   return (
     <div className="space-y-4">
       {/* Sub Tabs */}
-      <div className="flex border-b border-outline-variant space-x-4">
+      <div className="flex border-b border-gray-100 space-x-4">
         <button
           onClick={() => setActiveSubTab('verification')}
           className={`flex items-center gap-1.5 pb-2.5 text-xs md:text-sm font-bold border-b-2 transition ${
@@ -1601,10 +1601,10 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 10 }}
-            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {/* PR Inbox */}
-            <div className="lg:col-span-2 p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
               <div>
                 <h3 className="text-base font-extrabold text-on-surface">Requisitions Verification Queue</h3>
                 <p className="text-xs text-textMuted mt-1">Audit raw field maintenance tickets. Analyze current stock balances across Thilafushi, Muthaafushi, and Bodufinolhu.</p>
@@ -1615,8 +1615,8 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                   const stocks = inventory.filter(i => i.generic_item_id.toLowerCase().trim() === pr.item_generic_name.toLowerCase().trim());
                   
                   return (
-                    <div key={pr.pr_id} className="p-4 rounded-xl border border-outline-variant bg-surface-container/30 space-y-4">
-                      <div className="flex justify-between items-start border-b border-dashed pb-2 border-outline-variant">
+                    <div key={pr.pr_id} className="p-4 rounded-xl border border-gray-100 bg-gray-50 space-y-4">
+                      <div className="flex justify-between items-start border-b border-dashed pb-2 border-gray-100">
                         <div>
                           <span className="text-xs font-bold text-primary">{pr.pr_id}</span>
                           <h4 className="text-sm font-extrabold text-on-surface mt-0.5">{pr.item_generic_name}</h4>
@@ -1626,25 +1626,25 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                       </div>
 
                       <div className="text-xs space-y-3.5">
-                        <p className="bg-surface-container-low p-2.5 rounded-lg border italic text-textMuted">
+                        <p className="bg-gray-50 p-2.5 rounded-lg border italic text-textMuted">
                           Justification: "{pr.justification}"
                         </p>
-                        <div className="flex justify-between items-center bg-surface-container-low/40 p-2 rounded-lg border border-outline-variant">
+                        <div className="flex justify-between items-center bg-gray-50 p-2 rounded-lg border border-gray-100">
                           <span className="text-textMuted font-bold">Requested Quantity: </span>
                           <span className="font-extrabold text-primary text-sm">{pr.quantity} units</span>
                         </div>
 
                         {/* Inventory Site Lookup */}
-                        <div className="p-3 rounded-xl border border-outline-variant bg-white/60 space-y-2">
+                        <div className="p-3 rounded-xl border border-gray-100 bg-white/60 space-y-2">
                           <span className="font-extrabold text-on-surface text-[10px] uppercase tracking-wider block">Relational Multi-Site stock checking</span>
                           {stocks.length === 0 ? (
                             <span className="text-red-600 font-extrabold block text-xs bg-red-50 p-2 rounded border border-red-100 flex items-center gap-1">
                               <XCircle className="w-4 h-4" /> Inventory Deficit: 0 items in stock across base and active project sites
                             </span>
                           ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                               {stocks.map((stk, idx) => (
-                                <div key={idx} className="flex items-center justify-between text-[11px] p-2 bg-surface-container-low border rounded-lg">
+                                <div key={idx} className="flex items-center justify-between text-[11px] p-2 bg-gray-50 border rounded-lg">
                                   <span className="font-bold text-on-surface">{stk.location_base}:</span>
                                   {getInventoryBadge(stk.quantity)}
                                 </div>
@@ -1657,7 +1657,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                       <div className="pt-2 flex justify-end">
                         <button 
                           onClick={() => handleMarkChecked(pr.pr_id)}
-                          className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow-elevation-1 hover:bg-primary-dark transition active:scale-95 flex items-center gap-1"
+                          className="px-4 py-2 bg-primary text-white text-xs font-bold rounded-lg shadow-sm hover:bg-primary-dark transition active:scale-95 flex items-center gap-1"
                         >
                           <Check className="w-3.5 h-3.5" /> Verify & Mark "Checked"
                         </button>
@@ -1672,7 +1672,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
             </div>
 
             {/* Live Inventory Overview */}
-            <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
               <div>
                 <h3 className="text-base font-extrabold text-on-surface">Unified Stock Ledger</h3>
                 <p className="text-xs text-textMuted mt-1">Audited real-time balances across Base depot and Outer project sites.</p>
@@ -1680,7 +1680,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
 
               <div className="space-y-3 max-h-[500px] overflow-y-auto pr-1">
                 {inventory.map((inv, idx) => (
-                  <div key={idx} className="p-3.5 rounded-xl border border-outline-variant bg-surface-container-low/40 space-y-1.5 shadow-elevation-1">
+                  <div key={idx} className="p-3.5 rounded-xl border border-gray-100 bg-gray-50 space-y-1.5 shadow-sm">
                     <div className="flex justify-between items-center text-xs">
                       <span className="font-extrabold text-on-surface">{inv.item_name}</span>
                       {getInventoryBadge(inv.quantity)}
@@ -1699,10 +1699,10 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
             initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -10 }}
-            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {/* RFQ Sourcing Deck */}
-            <div className="lg:col-span-2 p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
               <div>
                 <h3 className="text-base font-extrabold text-on-surface">RFQ Sourcing & Sourcing Receipt</h3>
                 <p className="text-xs text-textMuted mt-1">Upload supplier quotes for approved requests. Perform delivery receipts on orders where POs have been issued.</p>
@@ -1722,8 +1722,8 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                         pr.status === 'PR_Approved' ? 'cursor-pointer' : 'cursor-default'
                       } ${
                         isActive
-                          ? 'border-primary bg-primary-container/10 shadow-elevation-1'
-                          : 'border-outline-variant bg-surface-container/30 hover:bg-surface-container/60'
+                          ? 'border-primary bg-primary-container/10 shadow-sm'
+                          : 'border-gray-100 bg-gray-50 hover:bg-gray-50'
                       }`}
                     >
                       <div className="flex justify-between items-start">
@@ -1740,13 +1740,13 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                         </div>
                       </div>
 
-                      <div className="mt-3 flex justify-between items-center text-xs pt-2 border-t border-dashed border-outline-variant">
+                      <div className="mt-3 flex justify-between items-center text-xs pt-2 border-t border-dashed border-gray-100">
                         <span className="font-medium text-textMuted">Requested by: <span className="font-bold text-on-surface">{pr.requested_by_email}</span></span>
                         <span className="font-extrabold text-secondary">Qty: {pr.quantity}</span>
                       </div>
 
                       {pr.status === 'PR_Approved' && (
-                        <div className="mt-3 pt-3 border-t border-dashed border-outline-variant space-y-2">
+                        <div className="mt-3 pt-3 border-t border-dashed border-gray-100 space-y-2">
                           {quotesCount < 3 ? (
                             <div className="p-3 rounded-xl bg-orange-50 border border-orange-200 flex items-start gap-2">
                               <AlertTriangle className="w-4 h-4 text-orange-600 shrink-0 mt-0.5" />
@@ -1763,7 +1763,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                                 e.stopPropagation();
                                 handleSubmitSourcingPackage(pr.pr_id);
                               }}
-                              className="w-full py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-xs font-extrabold transition shadow-elevation-1 flex items-center justify-center gap-1.5 active:scale-95"
+                              className="w-full py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-xs font-extrabold transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95"
                             >
                               <Send className="w-3.5 h-3.5" /> Submit Sourcing Package to GM
                             </button>
@@ -1772,7 +1772,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                       )}
 
                       {pr.status === 'PO_Raised' && (
-                        <div className="mt-3 pt-3 border-t border-dashed border-outline-variant flex justify-end">
+                        <div className="mt-3 pt-3 border-t border-dashed border-gray-100 flex justify-end">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
@@ -1794,7 +1794,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
             </div>
 
             {/* Quote Uploader Dropzone */}
-            <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
               <div>
                 <h3 className="text-base font-extrabold text-on-surface">Gemini Pricing Extraction Desk</h3>
                 <p className="text-xs text-textMuted mt-1">Upload incoming PDF supplier quotes. The system automatically structures pricing details and updates historical matrices.</p>
@@ -1814,7 +1814,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                     className={`p-8 rounded-xl border-2 border-dashed flex flex-col items-center justify-center space-y-3 transition cursor-pointer ${
                       isDragging 
                         ? 'border-primary bg-primary-container/30' 
-                        : 'border-outline hover:bg-surface-container-low'
+                        : 'border-outline hover:bg-gray-50'
                     }`}
                   >
                     {uploading ? (
@@ -1836,7 +1836,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                         />
                         <label 
                           htmlFor="quote-file-uploader"
-                          className="px-3.5 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-[11px] font-bold cursor-pointer transition inline-block shadow-elevation-1"
+                          className="px-3.5 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-[11px] font-bold cursor-pointer transition inline-block shadow-sm"
                         >
                           Choose PDF
                         </label>
@@ -1845,7 +1845,7 @@ function ProcurementDashboard({ db, onRefresh, showToast }) {
                   </div>
                 </div>
               ) : (
-                <div className="p-6 rounded-xl bg-surface-container/40 text-center border border-outline-variant text-xs text-textMuted italic font-medium">
+                <div className="p-6 rounded-xl bg-gray-50/40 text-center border border-gray-100 text-xs text-textMuted italic font-medium">
                   Select an active Sourcing Request on the left workspace to display the Gemini quote uploader.
                 </div>
               )}
@@ -1894,33 +1894,33 @@ function FinanceDashboard({ db, onRefresh, showToast }) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-5 bg-white/80 rounded-2xl border border-outline-variant shadow-elevation-1 space-y-2">
-          <span className="text-[10px] uppercase font-extrabold text-textMuted tracking-wider">Immediate Queue</span>
-          <p className="text-2xl font-extrabold text-on-surface">{disbursementQueue.length}</p>
-          <p className="text-[10px] text-textMuted font-medium">Procurement payments awaiting finance action</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-white rounded-xl shadow-sm border border-amber-100 p-6 space-y-2">
+          <span className="text-[10px] uppercase font-extrabold text-amber-700 tracking-wider">Immediate Queue</span>
+          <p className="text-2xl font-extrabold text-amber-900">{disbursementQueue.length}</p>
+          <p className="text-[10px] text-amber-800/80 font-medium">Procurement payments awaiting finance action</p>
         </div>
-        <div className="p-5 bg-white/80 rounded-2xl border border-outline-variant shadow-elevation-1 space-y-2">
-          <span className="text-[10px] uppercase font-extrabold text-textMuted tracking-wider">Procurement Exposure</span>
+        <div className="bg-red-50 rounded-xl shadow-sm border border-red-100 p-6 space-y-2">
+          <span className="text-[10px] uppercase font-extrabold text-red-700 tracking-wider">Procurement Exposure</span>
           <p className="text-2xl font-extrabold text-red-700">MVR {payableTotal.toLocaleString()}</p>
-          <p className="text-[10px] text-textMuted font-medium">Tagged as PROCUREMENT_EXPENSE</p>
+          <p className="text-[10px] text-red-900/70 font-medium">Tagged as PROCUREMENT_EXPENSE</p>
         </div>
-        <div className="p-5 bg-white/80 rounded-2xl border border-outline-variant shadow-elevation-1 space-y-2">
-          <span className="text-[10px] uppercase font-extrabold text-textMuted tracking-wider">CRM Revenue Ledger</span>
+        <div className="bg-emerald-50 rounded-xl shadow-sm border border-emerald-100 p-6 space-y-2">
+          <span className="text-[10px] uppercase font-extrabold text-emerald-700 tracking-wider">CRM Revenue Ledger</span>
           <p className="text-2xl font-extrabold text-emerald-700">MVR {revenueTotal.toLocaleString()}</p>
-          <p className="text-[10px] text-textMuted font-medium">Tagged as CRM_REVENUE</p>
+          <p className="text-[10px] text-emerald-900/70 font-medium">Tagged as CRM_REVENUE</p>
         </div>
       </div>
 
-      <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b pb-4 border-dashed border-outline-variant">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 border-b pb-4 border-dashed border-gray-100">
           <div>
             <h3 className="text-base font-extrabold text-on-surface flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-primary" /> Immediate Disbursement Queue
             </h3>
             <p className="text-xs text-textMuted mt-1">Finance-only control desk for payable POs, Antrac submission, and bank clearance release.</p>
           </div>
-          <span className="px-3 py-1 text-xs font-bold rounded-full bg-purple-50 text-purple-800 border border-purple-200">Finance Gate</span>
+          <span className="px-3 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">Finance Gate</span>
         </div>
 
         <div className="space-y-3">
@@ -1928,7 +1928,7 @@ function FinanceDashboard({ db, onRefresh, showToast }) {
             const pr = getPr(entry.reference_id);
             const submitted = entry.payment_clearance_status === 'Submitted to Antrac';
             return (
-              <div key={entry.transaction_id} className="p-4 rounded-xl border border-outline-variant bg-surface-container/30 grid grid-cols-1 lg:grid-cols-4 gap-4 text-xs">
+              <div key={entry.transaction_id} className="p-4 rounded-xl border border-gray-100 bg-gray-50 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
                 <div className="lg:col-span-2 space-y-1">
                   <span className="font-extrabold text-primary block">{entry.transaction_id}</span>
                   <h4 className="text-sm font-extrabold text-on-surface">{pr?.item_generic_name || entry.reference_id}</h4>
@@ -1944,13 +1944,13 @@ function FinanceDashboard({ db, onRefresh, showToast }) {
                   <button
                     onClick={() => handleSendToAntrac(entry.reference_id)}
                     disabled={submitted}
-                    className="w-full py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-xs font-extrabold transition shadow-elevation-1 flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
+                    className="w-full py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-xs font-extrabold transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
                   >
                     <Send className="w-3.5 h-3.5" /> Send to Antrac
                   </button>
                   <button
                     onClick={() => handleClearAndRelease(entry.reference_id)}
-                    className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-extrabold transition shadow-elevation-1 flex items-center justify-center gap-1.5 active:scale-95"
+                    className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-extrabold transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95"
                   >
                     <CheckCircle className="w-3.5 h-3.5" /> Clear & Release Stock
                   </button>
@@ -1964,15 +1964,15 @@ function FinanceDashboard({ db, onRefresh, showToast }) {
         </div>
       </div>
 
-      <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
-        <div className="border-b pb-4 border-dashed border-outline-variant">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+        <div className="border-b pb-4 border-dashed border-gray-100">
           <h3 className="text-base font-extrabold text-on-surface">Unified Ledger Separation</h3>
           <p className="text-xs text-textMuted mt-1">All finance rows remain in one sheet while reporting is separated by ledger type and reference type.</p>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-xs text-left border-collapse">
             <thead>
-              <tr className="border-b border-outline-variant bg-surface-container/60">
+              <tr className="border-b border-gray-100 bg-gray-50">
                 <th className="p-3 font-extrabold uppercase text-textMuted">Transaction</th>
                 <th className="p-3 font-extrabold uppercase text-textMuted">Ledger Type</th>
                 <th className="p-3 font-extrabold uppercase text-textMuted">Reference</th>
@@ -1983,7 +1983,7 @@ function FinanceDashboard({ db, onRefresh, showToast }) {
             </thead>
             <tbody>
               {finance.map(entry => (
-                <tr key={entry.transaction_id} className="border-b border-outline-variant hover:bg-surface-container-low transition">
+                <tr key={entry.transaction_id} className="border-b border-gray-100 odd:bg-white even:bg-gray-50/50 hover:bg-emerald-50/40 transition">
                   <td className="p-3 font-extrabold text-primary">{entry.transaction_id}</td>
                   <td className="p-3 font-bold">{entry.ledger_type}</td>
                   <td className="p-3 font-semibold">{entry.reference_id}</td>
@@ -2061,10 +2061,10 @@ function RequesteeDashboard({ db, onRefresh, showToast }) {
   });
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       
       {/* Real-time material inventory lookup */}
-      <div className="lg:col-span-2 p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
+      <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
           <div>
             <h3 className="text-base font-extrabold text-on-surface">Material Stock Balance Lookup</h3>
@@ -2072,14 +2072,14 @@ function RequesteeDashboard({ db, onRefresh, showToast }) {
           </div>
           
           {/* Site Filter Tabs */}
-          <div className="flex bg-surface-container rounded-xl p-0.5 text-[11px] font-bold border shrink-0">
+          <div className="flex bg-gray-50 rounded-xl p-0.5 text-[11px] font-bold border shrink-0">
             {['All', 'Thilafushi', 'Muthaafushi', 'Bodufinolhu'].map(site => (
               <button
                 key={site}
                 onClick={() => setFilterSite(site)}
                 className={`px-3 py-1.5 rounded-lg transition ${
                   filterSite === site 
-                    ? 'bg-white text-primary shadow-elevation-1' 
+                    ? 'bg-white text-primary shadow-sm' 
                     : 'text-textMuted hover:text-on-surface'
                 }`}
               >
@@ -2095,12 +2095,12 @@ function RequesteeDashboard({ db, onRefresh, showToast }) {
           placeholder="Search materials catalog..."
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full p-3 text-xs border border-outline-variant rounded-xl bg-surface-container-lowest/80 focus:border-primary transition outline-none shadow-elevation-1"
+          className="w-full p-3 text-xs border border-gray-100 rounded-xl bg-gray-50est/80 focus:border-primary transition outline-none shadow-sm"
         />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-1">
           {filteredInventory.map((item, idx) => (
-            <div key={idx} className="p-3.5 bg-surface-container/20 border border-outline-variant rounded-2xl flex justify-between items-center text-xs shadow-elevation-1 hover:bg-surface-container/45 transition">
+            <div key={idx} className="p-3.5 bg-gray-50 border border-gray-100 rounded-xl flex justify-between items-center text-xs shadow-sm hover:bg-gray-50/45 transition">
               <div>
                 <span className="font-extrabold text-on-surface block">{item.item_name}</span>
                 <span className="text-[10px] text-textMuted font-bold mt-1.5 block flex items-center gap-0.5">
@@ -2114,7 +2114,7 @@ function RequesteeDashboard({ db, onRefresh, showToast }) {
       </div>
 
       {/* Requisition creation form */}
-      <div className="p-5 bg-white/70 backdrop-blur-md rounded-2xl border border-outline-variant shadow-elevation-1 space-y-4">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
         <div>
           <h3 className="text-base font-extrabold text-on-surface">Raise Material Requisition</h3>
           <p className="text-xs text-textMuted mt-1">Binds maintenance requirements strictly to Asset IDs (for OEM parts) or Base Locations (for MRO consumables).</p>
@@ -2128,14 +2128,14 @@ function RequesteeDashboard({ db, onRefresh, showToast }) {
               placeholder="e.g. Excavator PC350 Bucket Teeth"
               value={itemGenericName}
               onChange={e => setItemGenericName(e.target.value)}
-              className="w-full p-3 border rounded-xl bg-white outline-none shadow-elevation-1"
+              className="w-full p-3 border rounded-xl bg-white outline-none shadow-sm"
               required
             />
           </div>
 
           <div className="space-y-2">
             <label className="font-bold block">Audit compliance link</label>
-            <div className="flex bg-surface-container rounded-xl p-0.5 border">
+            <div className="flex bg-gray-50 rounded-xl p-0.5 border">
               <button 
                 type="button" 
                 onClick={() => { setLinkageType('asset'); setTargetLinkage(''); }}
@@ -2166,14 +2166,14 @@ function RequesteeDashboard({ db, onRefresh, showToast }) {
                   placeholder="e.g. WL-HV-0008 (Volvo A40G / PC350)"
                   value={targetLinkage}
                   onChange={e => setTargetLinkage(e.target.value)}
-                  className="w-full p-3 border rounded-xl bg-white outline-none shadow-elevation-1"
+                  className="w-full p-3 border rounded-xl bg-white outline-none shadow-sm"
                   required
                 />
               ) : (
                 <select 
                   value={targetLinkage}
                   onChange={e => setTargetLinkage(e.target.value)}
-                  className="w-full p-3 border rounded-xl bg-white outline-none shadow-elevation-1 font-semibold"
+                  className="w-full p-3 border rounded-xl bg-white outline-none shadow-sm font-semibold"
                   required
                 >
                   <option value="">Select Base Linkage...</option>
@@ -2192,7 +2192,7 @@ function RequesteeDashboard({ db, onRefresh, showToast }) {
               placeholder="e.g. 5"
               value={quantity}
               onChange={e => setQuantity(e.target.value)}
-              className="w-full p-3 border rounded-xl bg-white outline-none shadow-elevation-1"
+              className="w-full p-3 border rounded-xl bg-white outline-none shadow-sm"
               required
             />
           </div>
@@ -2203,7 +2203,7 @@ function RequesteeDashboard({ db, onRefresh, showToast }) {
               placeholder="Explain the maintenance failure context or consumption baseline requirements for this request..."
               value={justification}
               onChange={e => setJustification(e.target.value)}
-              className="w-full p-3 border rounded-xl bg-white h-24 outline-none shadow-elevation-1 resize-none"
+              className="w-full p-3 border rounded-xl bg-white h-24 outline-none shadow-sm resize-none"
               required
             />
           </div>
@@ -2211,7 +2211,7 @@ function RequesteeDashboard({ db, onRefresh, showToast }) {
           <button 
             type="submit"
             disabled={submitting}
-            className="w-full py-3 bg-primary hover:bg-primary-dark font-bold text-white rounded-xl transition shadow-elevation-1 flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-75"
+            className="w-full py-3 bg-primary hover:bg-primary-dark font-bold text-white rounded-xl transition shadow-sm flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-75"
           >
             {submitting ? (
               <RefreshCw className="w-4 h-4 animate-spin" />

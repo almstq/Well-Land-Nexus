@@ -1,20 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
-  Shield, Wrench, ShoppingBag, Send, AlertTriangle, Key, 
-  Menu, X, Sparkles, Database, HelpCircle, UserCheck, ArrowRight,
-  TrendingUp, RefreshCw, Layers
+  Shield, AlertTriangle, Key, 
+  Sparkles, Database, ArrowRight,
+  RefreshCw, Layers
 } from 'lucide-react';
 import * as api from './services/api';
 import Dashboards from './components/Dashboards';
+import Layout from './components/Layout';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
   const [emailInput, setEmailInput] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState('');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [isBypassExpanded, setIsBypassExpanded] = useState(true);
   
   // Try loading active user from sessionStorage on mount
   useEffect(() => {
@@ -73,7 +72,7 @@ export default function App() {
       
       {/* 1. DEVELOPER BYPASS PANEL — visible only to privileged accounts */}
       {currentUser && (currentUser.email === 'alie.mustarq@gmail.com' || currentUser.email === 'gm@welllandinvestment.com') && (
-        <div className="z-40 bg-primary-dark text-white shadow-elevation-2 border-b border-white/10 premium-glass-dark">
+        <div className="z-40 bg-primary-dark text-white shadow-md border-b border-white/10 premium-glass-dark">
           <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
               {currentUser.email === 'alie.mustarq@gmail.com' && (
@@ -103,7 +102,7 @@ export default function App() {
                   onClick={() => handleRoleSwap(item.id)}
                   className={`px-2 py-1 rounded text-[10px] font-extrabold transition-all border ${
                     currentUser.role === item.id 
-                      ? 'bg-white text-primary-dark border-white shadow-elevation-1 scale-105 font-black' 
+                      ? 'bg-white text-primary-dark border-white shadow-sm scale-105 font-black' 
                       : 'bg-transparent text-white/80 border-white/20 hover:bg-white/10'
                   }`}
                 >
@@ -263,141 +262,13 @@ export default function App() {
         </div>
       ) : (
         
-        // 3. SECURED PLATFORM MAIN DASHBOARD STRUCTURE
-        <div className="flex-1 flex flex-col md:flex-row relative">
-          
-          {/* Navigation Sidebar Drawer */}
-          <AnimatePresence>
-            {sidebarOpen && (
-              <motion.div 
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: 260, opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="z-30 w-[260px] bg-[#0f172a] text-white flex flex-col justify-between shrink-0 border-r border-white/5 premium-glass-dark"
-              >
-                <div>
-                  {/* Sidebar Header */}
-                  <div className="p-5 flex items-center justify-between border-b border-white/5">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-                        <Shield className="w-4 h-4 text-white" />
-                      </div>
-                      <div>
-                        <span className="text-[10px] font-extrabold uppercase tracking-widest text-primary/80 block">Core Portal</span>
-                        <span className="font-extrabold text-[14px]">Well Land Ops</span>
-                      </div>
-                    </div>
-                    <button 
-                      onClick={() => setSidebarOpen(false)}
-                      className="p-1 rounded hover:bg-white/10 text-white md:hidden"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Sidebar Profile Container */}
-                  <div className="p-4 bg-white/5 border-b border-white/5 text-xs space-y-1">
-                    <span className="text-[9px] uppercase font-bold text-gray-500">Security Credentials</span>
-                    <p className="font-extrabold truncate text-white">{currentUser.display_name}</p>
-                    <p className="text-[10px] text-primary italic truncate font-semibold">{currentUser.email}</p>
-                    <div className="pt-2 flex items-center gap-1.5">
-                      <span className={`w-2 h-2 rounded-full bg-green-500 animate-pulse`}></span>
-                      <span className="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-primary-container/20 text-primary border border-primary/20">{currentUser.role}</span>
-                    </div>
-                  </div>
-
-                  {/* Navigation Links */}
-                  <div className="p-4 space-y-1">
-                    {[
-                      { label: 'GM Executive Console', role: 'Admin', icon: Shield },
-                      { label: 'Procurement Officer Desk', role: 'Procurement', icon: ShoppingBag },
-                      { label: 'Finance Disbursement Desk', role: 'Finance', icon: TrendingUp },
-                      { label: 'Site Supervisor View', role: 'Supervisor', icon: Wrench },
-                      { label: 'Field Operator Requisitions', role: 'Requestee', icon: Send }
-                    ].map((lnk, idx) => {
-                      const hasAccess = currentUser.role === 'Admin' || currentUser.role === lnk.role;
-                      return (
-                        <div 
-                          key={idx}
-                          className={`p-3 rounded-xl flex items-center gap-3 text-xs font-bold border transition ${
-                            currentUser.role === lnk.role
-                              ? 'bg-primary text-white border-primary shadow-elevation-1'
-                              : hasAccess
-                                ? 'bg-transparent text-gray-300 border-transparent hover:bg-white/5 hover:text-white'
-                                : 'opacity-40 bg-transparent text-gray-500 border-transparent cursor-not-allowed'
-                          }`}
-                        >
-                          <lnk.icon className="w-4 h-4" />
-                          <span>{lnk.label}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Sidebar Footer */}
-                <div className="p-4 border-t border-white/5 text-[10px] text-gray-500 font-semibold space-y-2">
-                  <p className="flex items-center gap-1">
-                    <Database className="w-3.5 h-3.5 text-primary" /> Syncing relational schema files
-                  </p>
-                  <p className="text-[9px] text-gray-600">Secure "Execute as Me" handshakes active.</p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Main Content Pane */}
-          <div className="flex-1 flex flex-col min-w-0">
-            {/* Header Toolbar */}
-            <header className="h-16 bg-white border-b border-outline-variant px-5 flex items-center justify-between shrink-0 shadow-soft">
-              <div className="flex items-center gap-3">
-                {!sidebarOpen && (
-                  <button 
-                    onClick={() => setSidebarOpen(true)}
-                    className="p-2 rounded-xl bg-surface-container hover:bg-surface-container-high border border-outline-variant transition active:scale-95"
-                  >
-                    <Menu className="w-4.5 h-4.5" />
-                  </button>
-                )}
-                <div>
-                  <h1 className="text-base font-extrabold text-on-surface">Secure Industrial Procurement Control</h1>
-                  <span className="text-[10px] text-textMuted font-bold block -mt-0.5">Real-time status updates tied to Google Sheets registry</span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                {currentUser.email === 'alie.mustarq@gmail.com' && (
-                  <span className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-600 text-white font-black text-[9px] uppercase tracking-widest border border-red-500 shadow-md">
-                    [SYSTEM DEVELOPER MODE]
-                  </span>
-                )}
-                <div className="hidden sm:flex flex-col text-right text-xs mr-2">
-                  <span className="font-extrabold text-on-surface">{currentUser.display_name}</span>
-                  <span className="text-[10px] text-textMuted italic font-medium">{currentUser.email}</span>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="px-3.5 py-1.5 text-xs font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 rounded-lg border border-red-200 transition active:scale-95"
-                >
-                  Sign Out
-                </button>
-              </div>
-            </header>
-
-            {/* Dashboard Routing Container */}
-            <main className="flex-1 p-5 md:p-6 overflow-y-auto bg-surface-container-low/40">
-              <div className="max-w-7xl mx-auto">
-                <Dashboards 
-                  role={currentUser.role} 
-                  userEmail={currentUser.email} 
-                  onLogout={handleLogout} 
-                />
-              </div>
-            </main>
-          </div>
-
-        </div>
+        <Layout currentUser={currentUser} onLogout={handleLogout}>
+          <Dashboards
+            role={currentUser.role}
+            userEmail={currentUser.email}
+            onLogout={handleLogout}
+          />
+        </Layout>
       )}
 
     </div>
