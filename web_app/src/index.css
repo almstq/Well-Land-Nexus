@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    @apply bg-surface text-on-surface antialiased min-h-screen overflow-x-hidden;
+  }
+}
+
+/* Customized Premium Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-outline-variant/45 rounded-full hover:bg-outline/30 transition-colors;
+}
+
+/* Modern Glassmorphic Premium Utilities */
+.premium-glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(196, 198, 208, 0.45);
+}
+
+.premium-glass-dark {
+  background: rgba(26, 28, 35, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Subtle premium visual pulses */
+@keyframes soft-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 2s infinite ease-in-out;
+}
+
+/* Material Design 3 Focus and Outline fixes */
+input:focus, select:focus, textarea:focus {
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-surface outline-none border-transparent transition-all;
+}

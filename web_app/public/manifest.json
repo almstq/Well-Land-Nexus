@@ -1,0 +1,16 @@
+{
+  "short_name": "WLOps",
+  "name": "Well Land Operations Core",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#f8fafd",
+  "theme_color": "#0b57d0",
+  "display": "standalone",
+  "orientation": "portrait"
+}

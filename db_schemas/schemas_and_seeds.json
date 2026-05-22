@@ -1,0 +1,523 @@
+{
+  "Sheet_User_Registry": [
+    {
+      "email": "alie.mustarq@gmail.com",
+      "display_name": "Ali Musthaq",
+      "role": "Admin",
+      "status": "Active"
+    }
+  ],
+  "Sheet_Assets_Fleet": [
+    {
+      "asset_id": "WL-MV-0001",
+      "asset_name": "LCT 1",
+      "type": "LCT",
+      "location": "Thilafushi",
+      "live_status": "Active",
+      "current_operator": "Ali Shameem (WL-EMP-0001)",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-MV-0002",
+      "asset_name": "Dhoni 1",
+      "type": "Dhoni/Ferry",
+      "location": "Thilafushi",
+      "live_status": "Active",
+      "current_operator": "Nasrulla Ali (WL-EMP-0003)",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-MV-0003",
+      "asset_name": "Speed Boat 1",
+      "type": "Speed Boat",
+      "location": "Thilafushi",
+      "live_status": "Running",
+      "current_operator": "Jakir Hossain (WL-EMP-0011)",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-MV-0004",
+      "asset_name": "Speed Boat 2",
+      "type": "Speed Boat",
+      "location": "Thilafushi",
+      "live_status": "Drydocked",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0001",
+      "asset_name": "Volvo A40G Dump Truck",
+      "type": "Hauler Dump Truck",
+      "location": "Bodufinolhu",
+      "live_status": "Active — Site",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "3.8121,72.8456"
+    },
+    {
+      "asset_id": "WL-HV-0002",
+      "asset_name": "Volvo A40G Dump Truck",
+      "type": "Hauler Dump Truck",
+      "location": "Muthaafushi",
+      "live_status": "Active — Site",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.2156,73.5031"
+    },
+    {
+      "asset_id": "WL-HV-0003",
+      "asset_name": "Isuzu 14 Tons Dump Truck",
+      "type": "Dump Truck",
+      "location": "Thilafushi",
+      "live_status": "Standby",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0004",
+      "asset_name": "UD Nissan 14 Tons Dump Truck",
+      "type": "Dump Truck",
+      "location": "Thilafushi",
+      "live_status": "Standby",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0005",
+      "asset_name": "Komatsu PC350 Excavator",
+      "type": "Low Bed Excavator",
+      "location": "Thilafushi",
+      "live_status": "Unknown",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0006",
+      "asset_name": "Komatsu PC350 Excavator",
+      "type": "Low Bed Excavator",
+      "location": "Thilafushi",
+      "live_status": "Unknown",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0007",
+      "asset_name": "Komatsu PC350 Excavator",
+      "type": "Low Bed Excavator",
+      "location": "Thilafushi",
+      "live_status": "Unknown",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0008",
+      "asset_name": "Komatsu PC350 Excavator",
+      "type": "High Bed Excavator",
+      "location": "Thilafushi",
+      "live_status": "Grounded",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0009",
+      "asset_name": "Kobelco SK380 Excavator",
+      "type": "High Bed Excavator",
+      "location": "Thilafushi",
+      "live_status": "Grounded",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0010",
+      "asset_name": "Tadano TR300EX Crane",
+      "type": "Mobile Crane",
+      "location": "Thilafushi",
+      "live_status": "Standby",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0011",
+      "asset_name": "Kobelco SK235 Excavator",
+      "type": "Low Bed Excavator",
+      "location": "Thilafushi",
+      "live_status": "Unknown",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0012",
+      "asset_name": "Kubota 50 Excavator",
+      "type": "Low Bed Excavator",
+      "location": "Thilafushi",
+      "live_status": "Unknown",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0013",
+      "asset_name": "Nissan 5 Tons Forklift",
+      "type": "Forklift",
+      "location": "Thilafushi",
+      "live_status": "Standby",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0014",
+      "asset_name": "Bobcat Utility",
+      "type": "Bobcat",
+      "location": "Thilafushi",
+      "live_status": "Unknown",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0015",
+      "asset_name": "AF 6 Tons Pickup",
+      "type": "Pickup",
+      "location": "Thilafushi",
+      "live_status": "Standby",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0016",
+      "asset_name": "CAT Loader",
+      "type": "Loader",
+      "location": "Thilafushi",
+      "live_status": "Unknown",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0017",
+      "asset_name": "Excavator (New)",
+      "type": "Excavator",
+      "location": "Thilafushi",
+      "live_status": "New — Verify",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0018",
+      "asset_name": "Excavator (New)",
+      "type": "Excavator",
+      "location": "Thilafushi",
+      "live_status": "New — Verify",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0019",
+      "asset_name": "Excavator (New)",
+      "type": "Excavator",
+      "location": "Thilafushi",
+      "live_status": "New — Verify",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    },
+    {
+      "asset_id": "WL-HV-0020",
+      "asset_name": "Excavator (New)",
+      "type": "Excavator",
+      "location": "Thilafushi",
+      "live_status": "New — Verify",
+      "current_operator": "—",
+      "meter_hours": 0,
+      "maps_coordinates": "4.1734,73.4492"
+    }
+  ],
+  "Sheet_Purchase_Requests": [
+    {
+      "pr_id": "PR-0001",
+      "item_generic_name": "Hydraulic control valve + hose — Hauler Dump Truck VOLVO A40G",
+      "category": "MRO / General",
+      "quantity": 1,
+      "justification": "Required due to leakage on VOLVO A40G at Muthaafushi",
+      "target_use": "WL-HV-0002",
+      "requested_by_email": "alie.mustarq@gmail.com",
+      "assigned_officer": "Procurement Officer",
+      "target_drive_folder_id": "",
+      "status": "Request Received",
+      "maintenance_trigger_type": "Corrective Maintenance"
+    },
+    {
+      "pr_id": "PR-0002",
+      "item_generic_name": "Excavator Bucket Teeth",
+      "category": "Heavy Machinery Parts",
+      "quantity": 6,
+      "justification": "Replace worn out teeth on PC350 excavators at base",
+      "target_use": "WL-HV-0008",
+      "requested_by_email": "alie.mustarq@gmail.com",
+      "assigned_officer": "Procurement Officer",
+      "target_drive_folder_id": "",
+      "status": "RFQ Sent",
+      "maintenance_trigger_type": "Corrective Maintenance"
+    },
+    {
+      "pr_id": "PR-0003",
+      "item_generic_name": "Engine Oil 15W40 (20L)",
+      "category": "Consumables",
+      "quantity": 10,
+      "justification": "Scheduled engine oil change for tugboat engines",
+      "target_use": "WL-MV-0001",
+      "requested_by_email": "alie.mustarq@gmail.com",
+      "assigned_officer": "Procurement Officer",
+      "target_drive_folder_id": "",
+      "status": "Completed",
+      "maintenance_trigger_type": "Scheduled Consumable"
+    }
+  ],
+  "Sheet_Item_Supplier_Matrix": [
+    {
+      "generic_item_id": "Hydraulic control valve + hose — Hauler Dump Truck VOLVO A40G",
+      "supplier_name": "Well Land Investment Pvt Ltd",
+      "extracted_sku_name": "VOLVO-A40G-VALVE-KIT",
+      "quoted_price_mvr": 45000,
+      "quote_date": "2026-05-10",
+      "price_variance_percentage": 0,
+      "po_reference": ""
+    },
+    {
+      "generic_item_id": "Excavator Bucket Teeth",
+      "supplier_name": "Alia Investments Pvt Ltd",
+      "extracted_sku_name": "KOMATSU-PC350-TEETH-X",
+      "quoted_price_mvr": 1800,
+      "quote_date": "2026-05-12",
+      "price_variance_percentage": 0,
+      "po_reference": ""
+    },
+    {
+      "generic_item_id": "Engine Oil 15W40 (20L)",
+      "supplier_name": "Kashimaa Boat",
+      "extracted_sku_name": "OIL-15W40-20L-K",
+      "quoted_price_mvr": 1250,
+      "quote_date": "2026-05-15",
+      "price_variance_percentage": 0,
+      "po_reference": "PO-PR-0003-20260515"
+    }
+  ],
+  "Sheet_Inventory_Ledger": [
+    {
+      "generic_item_id": "diesel",
+      "item_name": "Diesel Fuel",
+      "quantity": 3300,
+      "location_base": "Thilafushi"
+    },
+    {
+      "generic_item_id": "water",
+      "item_name": "Fresh Water",
+      "quantity": 3000,
+      "location_base": "Thilafushi"
+    },
+    {
+      "generic_item_id": "Welding electrode",
+      "item_name": "Welding Electrode Sticks",
+      "quantity": 320,
+      "location_base": "Thilafushi"
+    },
+    {
+      "generic_item_id": "Bolt Nuts and washer",
+      "item_name": "Bolt Nuts and Washer Assortment",
+      "quantity": 230,
+      "location_base": "Thilafushi"
+    },
+    {
+      "generic_item_id": "Ms angle bar",
+      "item_name": "Mild Steel Angle Bar",
+      "quantity": 145,
+      "location_base": "Thilafushi"
+    },
+    {
+      "generic_item_id": "M16 SS Nut",
+      "item_name": "M16 Stainless Steel Nut",
+      "quantity": 100,
+      "location_base": "Thilafushi"
+    },
+    {
+      "generic_item_id": "M16 SS Flat Washer",
+      "item_name": "M16 Stainless Steel Flat Washer",
+      "quantity": 100,
+      "location_base": "Thilafushi"
+    },
+    {
+      "generic_item_id": "Ms sheets",
+      "item_name": "Mild Steel Plate Sheets",
+      "quantity": 98,
+      "location_base": "Thilafushi"
+    },
+    {
+      "generic_item_id": "Ms flange",
+      "item_name": "Mild Steel Flange Fittings",
+      "quantity": 80,
+      "location_base": "Thilafushi"
+    },
+    {
+      "generic_item_id": "Cup Brush - Twisted Knot 4\"*M10",
+      "item_name": "Cup Brush - Twisted Knot 4\"*M10",
+      "quantity": 60,
+      "location_base": "Bodufinolhu"
+    }
+  ],
+  "Sheet_CRM_Agreements": [
+    {
+      "agreement_id": "RA0001",
+      "client_name": "Hilton Maldives Amingiri Resort & Spa",
+      "asset_ids_array": "[\"WL-HV-0010\", \"WL-MV-0001\"]",
+      "rate_structure": "LCT Rental: USD 2,595/day + Crane Rental: USD 1,945.52/day + Unloading Operation: USD 1,000.00. Operational limit: Billing starts Thilafushi exit, ends Thilafushi entry.",
+      "billing_cycle": "Project-based",
+      "start_date": "2026-03-11",
+      "current_logged_hours": 24,
+      "status": "Active",
+      "project_scope": "LCT Vessel & Tadano Crane Mobilization - Amingiri Lagoon Works",
+      "total_contract_value_mvr": 850000,
+      "agreement_status": "Active Contract",
+      "billing_milestones": "[{\"milestone\":\"Mobilization & Setup\",\"amount_mvr\":250000,\"status\":\"Paid\"},{\"milestone\":\"Operations Phase 1 (8 days)\",\"amount_mvr\":350000,\"status\":\"Invoiced\"},{\"milestone\":\"Demobilization & Final Survey\",\"amount_mvr\":250000,\"status\":\"Pending\"}]"
+    },
+    {
+      "agreement_id": "RA0002",
+      "client_name": "Antrac Holding",
+      "asset_ids_array": "[\"WL-HV-0010\"]",
+      "rate_structure": "Tadano Crane: 2 hrs @ 2,500/hr (5,000 MVR) + Laborers: 4 @ 600 (2,400 MVR).",
+      "billing_cycle": "Project-based",
+      "start_date": "2026-02-24",
+      "current_logged_hours": 2,
+      "status": "Active",
+      "project_scope": "Tadano Crane - Antrac Internal Yard Operations",
+      "total_contract_value_mvr": 7400,
+      "agreement_status": "Invoiced & Collected",
+      "billing_milestones": "[{\"milestone\":\"Full Day Service\",\"amount_mvr\":7400,\"status\":\"Paid\"}]"
+    },
+    {
+      "agreement_id": "RA0003",
+      "client_name": "Evosun Maldives Pvt Ltd",
+      "asset_ids_array": "[\"WL-MV-0001\"]",
+      "rate_structure": "HDPE Pipe Transportation. Includes LCT Vessel Hire (15 hrs @ 2,500) MVR 37,500, LCT Fuel (9 hrs @ 7,000) MVR 63,000, Komatsu PC70 Excavator Rental (10 hrs @ 625) MVR 6,250, PC70 Operator MVR 2,750, PC70 Fuel MVR 1,400, Mobilization and Demobilization MVR 3,000. Total MVR 113,900.00 (excl. GST).",
+      "billing_cycle": "Project-based",
+      "start_date": "2026-04-15",
+      "current_logged_hours": 15,
+      "status": "Active",
+      "project_scope": "HDPE Pipe Transportation - LCT Full Charter",
+      "total_contract_value_mvr": 123012,
+      "agreement_status": "Invoiced & Collected",
+      "billing_milestones": "[{\"milestone\":\"Full Voyage Completion\",\"amount_mvr\":123012,\"status\":\"Paid\"}]"
+    },
+    {
+      "agreement_id": "RA0004",
+      "client_name": "Cinnamon Hakuraa Huraa Maldives",
+      "asset_ids_array": "[]",
+      "rate_structure": "Prospective emergency standby equipment retainer and planned machinery rentals (LCT full package MVR 68,000/day, PC350 MVR 2,500/day, Volvo A40G MVR 3,200/day, Crane MVR 4,000/day).",
+      "billing_cycle": "Retainer",
+      "start_date": "2026-05-01",
+      "current_logged_hours": 0,
+      "status": "Pending",
+      "project_scope": "Emergency Standby Equipment Retainer - Resort Coverage",
+      "total_contract_value_mvr": 500000,
+      "agreement_status": "Lead",
+      "billing_milestones": "[{\"milestone\":\"Retainer Activation Fee\",\"amount_mvr\":100000,\"status\":\"Pending\"},{\"milestone\":\"Q2 Standby Coverage\",\"amount_mvr\":200000,\"status\":\"Pending\"},{\"milestone\":\"Q3 Standby Coverage\",\"amount_mvr\":200000,\"status\":\"Pending\"}]"
+    },
+    {
+      "agreement_id": "RA0005",
+      "client_name": "Alia Investments Pvt Ltd",
+      "asset_ids_array": "[\"WL-HV-0018\"]",
+      "rate_structure": "Tracked Excavator Komatsu PC70-8 (operator Shajalal) rented on hourly basis at MVR 900.00/hr. Total billed: 32 hrs.",
+      "billing_cycle": "Project-based",
+      "start_date": "2026-04-09",
+      "current_logged_hours": 32,
+      "status": "Active",
+      "project_scope": "Komatsu PC70-8 Excavator Rental - Island Earthworks",
+      "total_contract_value_mvr": 28800,
+      "agreement_status": "Active Contract",
+      "billing_milestones": "[{\"milestone\":\"First 15 Hours Block\",\"amount_mvr\":13500,\"status\":\"Paid\"},{\"milestone\":\"Final 17 Hours Block\",\"amount_mvr\":15300,\"status\":\"Invoiced\"}]"
+    }
+  ],
+  "Sheet_Finance_Ledger": [
+    {
+      "transaction_id": "TX-0001",
+      "reference_id": "RA0003",
+      "reference_type": "CRM",
+      "ledger_type": "CRM_REVENUE",
+      "counterparty_name": "Evosun Maldives Pvt Ltd",
+      "total_amount_mvr": 123012,
+      "antrac_submission_timestamp": "2026-04-15T12:00:00Z",
+      "payment_clearance_status": "Paid & Cleared",
+      "bank_reference_number": "CRM-PAID-RA0003",
+      "cleared_by_finance_email": "finance@welllandops.com"
+    },
+    {
+      "transaction_id": "TX-0002",
+      "reference_id": "RA0005",
+      "reference_type": "CRM",
+      "ledger_type": "CRM_REVENUE",
+      "counterparty_name": "Alia Investments Pvt Ltd",
+      "total_amount_mvr": 28800,
+      "antrac_submission_timestamp": "2026-04-09T12:00:00Z",
+      "payment_clearance_status": "Invoiced",
+      "bank_reference_number": "",
+      "cleared_by_finance_email": ""
+    },
+    {
+      "transaction_id": "TX-0003",
+      "reference_id": "PR-0003",
+      "reference_type": "PR",
+      "ledger_type": "PROCUREMENT_EXPENSE",
+      "counterparty_name": "Kashimaa Boat",
+      "total_amount_mvr": 12500,
+      "antrac_submission_timestamp": "2026-05-15T12:00:00Z",
+      "payment_clearance_status": "Paid & Cleared",
+      "bank_reference_number": "REF-BANK-99823",
+      "cleared_by_finance_email": "finance@welllandops.com"
+    }
+  ],
+  "Sheet_Asset_History_Log": [
+    {
+      "log_id": "LOG-000001",
+      "timestamp": "2026-05-10T08:30:00.000Z",
+      "event_type": "PR Raised",
+      "asset_id": "WL-HV-0002",
+      "location": "Muthaafushi",
+      "triggered_by_email": "alie.mustarq@gmail.com",
+      "notes": "Hydraulic valve replacement initiated on Volvo A40G"
+    },
+    {
+      "log_id": "LOG-000002",
+      "timestamp": "2026-05-12T10:15:00.000Z",
+      "event_type": "Quote Uploaded",
+      "asset_id": "WL-HV-0008",
+      "location": "Thilafushi",
+      "triggered_by_email": "procurement@welllandops.com",
+      "notes": "Komatsu PC350 bucket teeth - supplier quotes received"
+    },
+    {
+      "log_id": "LOG-000003",
+      "timestamp": "2026-05-15T14:00:00.000Z",
+      "event_type": "PO Raised",
+      "asset_id": "WL-MV-0001",
+      "location": "Thilafushi",
+      "triggered_by_email": "gm@welllandinvestment.com",
+      "notes": "Engine Oil 15W40 purchase order approved and dispatched"
+    }
+  ]
+}
