@@ -2,6 +2,9 @@
 //                   WELL LAND OPS v3.0 - API GATEWAY SERVICE
 // =========================================================================
 
+import { ENTITY_CONFIG, getEntityConfig } from '../entities/entityConfig';
+import schemasAndSeeds from '../db_schemas/schemas_and_seeds.json';
+
 // Utility to get the Google Apps Script Web App URL from environment
 export const getAppsScriptUrl = () => {
   return import.meta.env.VITE_GOOGLE_APPS_SCRIPT_URL || '';
@@ -172,6 +175,148 @@ export const triggerMilestoneInvoice = async (agreementId, milestoneIndex) => {
   return await callAppsScript('triggerMilestoneInvoice', { agreement_id: agreementId, milestone_index: milestoneIndex });
 };
 
+const getSchemaFields = (tableName) => {
+  const rows = schemasAndSeeds[tableName] || [];
+  if (rows.length > 0) {
+    return Object.keys(rows[0]);
+  }
+  if (tableName === 'Sheet_Audit_Log') {
+    return ['audit_id', 'timestamp', 'entity_type', 'entity_id', 'action', 'old_value_json', 'new_value_json', 'effective_date', 'corrected_by_email', 'correction_reason', 'affected_records_json'];
+  }
+  if (tableName === 'Sheet_Locations') {
+    return ['location_id', 'location_name', 'location_type', 'status', 'maps_coordinates'];
+  }
+  if (tableName === 'Sheet_Issue_Tickets') {
+    return ['ticket_id', 'raised_by_email', 'reported_by_id', 'location_id', 'asset_id', 'items_required_json', 'status', 'severity', 'description', 'created_at', 'updated_at', 'resolved_at'];
+  }
+  return [];
+};
+
+const validateEntityPatch = (type, patch) => {
+  if (!patch || typeof patch !== 'object' || Array.isArray(patch)) {
+    throw new Error('Patch must be an object.');
+  }
+  const { tableName } = getEntityConfig(type);
+  const allowed = getSchemaFields(tableName);
+  const invalid = Object.keys(patch).filter(key => !allowed.includes(key));
+  if (invalid.length > 0) {
+    throw new Error(`Invalid field(s) for ${type}: ${invalid.join(', ')}`);
+  }
+};
+
+const createAuditRecord = ({ type, id, action, oldValue, newValue, correctionMeta = {} }) => ({
+  audit_id: 'AUD-' + Math.floor(100000 + Math.random() * 900000),
+  timestamp: new Date().toISOString(),
+  entity_type: type,
+  entity_id: id,
+  action,
+  old_value_json: JSON.stringify(oldValue || {}),
+  new_value_json: JSON.stringify(newValue || {}),
+  effective_date: correctionMeta.effective_date || new Date().toISOString().split('T')[0],
+  corrected_by_email: getSessionEmail(),
+  correction_reason: correctionMeta.correction_reason || '',
+  affected_records_json: JSON.stringify(correctionMeta.affected_records || [])
+});
+
+export const entityCrud = {
+  updateCurrent: async (type, id, patch) => {
+    validateEntityPatch(type, patch);
+    const config = getEntityConfig(type);
+    const db = await fetchDatabase();
+    const current = (db[config.collectionKey] || []).find(row => row[config.pkName]?.toString() === id?.toString());
+    const record = { ...(current || {}), ...patch, [config.pkName]: id };
+    const result = await callAppsScript('entityUpdateCurrent', {
+      entityType: type,
+      tableName: config.tableName,
+      pkName: config.pkName,
+      pkValue: id,
+      record
+    });
+
+    if (type === 'issue_ticket') {
+      const auditRecord = createAuditRecord({
+        type,
+        id,
+        action: current ? 'Ticket Current Update' : 'Ticket Created',
+        oldValue: current || {},
+        newValue: record,
+        correctionMeta: {
+          effective_date: new Date().toISOString().split('T')[0],
+          correction_reason: current ? 'Issue ticket current-state update.' : 'Issue ticket created from operational form.',
+          affected_records: [id, record.asset_id].filter(Boolean)
+        }
+      });
+      await updateRecord('Sheet_Audit_Log', 'audit_id', auditRecord.audit_id, auditRecord);
+    }
+
+    return result;
+  },
+
+  correctHistorical: async (type, id, patch, correctionMeta) => {
+    validateEntityPatch(type, patch);
+    if (!correctionMeta?.correction_reason || !correctionMeta?.effective_date) {
+      throw new Error('Historical correction requires correction_reason and effective_date.');
+    }
+    const config = getEntityConfig(type);
+    return await callAppsScript('entityCorrectHistorical', {
+      entityType: type,
+      tableName: config.tableName,
+      pkName: config.pkName,
+      pkValue: id,
+      patch,
+      correctionMeta: {
+        correction_reason: correctionMeta.correction_reason,
+        effective_date: correctionMeta.effective_date,
+        affected_records: correctionMeta.affected_records || []
+      }
+    });
+  },
+
+  softDelete: async (type, id, reason = 'Soft delete requested') => {
+    const config = getEntityConfig(type);
+    return await callAppsScript('entitySoftDelete', {
+      entityType: type,
+      tableName: config.tableName,
+      pkName: config.pkName,
+      pkValue: id,
+      reason
+    });
+  },
+
+  restore: async (type, id) => {
+    const config = getEntityConfig(type);
+    return await callAppsScript('entityRestore', {
+      entityType: type,
+      tableName: config.tableName,
+      pkName: config.pkName,
+      pkValue: id
+    });
+  }
+};
+
+export const raiseIssueTicket = async (ticket) => {
+  const result = await entityCrud.updateCurrent('issue_ticket', ticket.ticket_id, ticket);
+  const db = await fetchDatabase();
+  const location = (db.locations || []).find(row => row.location_id === ticket.location_id);
+  await logHistoryEntry(
+    'Issue Ticket Raised',
+    ticket.asset_id,
+    location?.location_name || ticket.location_id,
+    `${ticket.ticket_id} / ${ticket.severity}: ${ticket.description}`,
+    ticket.created_at
+  );
+
+  if (ticket.severity === 'High') {
+    await callAppsScript('notifyHighSeverityIssue', { ticket });
+  }
+
+  return {
+    ...result,
+    ticketId: ticket.ticket_id,
+    notificationTriggered: ticket.severity === 'High'
+  };
+};
+
 // 9. Dynamic User Authentication matching Sheet_User_Registry
 export const authenticateUser = async (email) => {
   const normalizedEmail = email.toLowerCase().trim();
@@ -235,8 +380,6 @@ export const authenticateUser = async (email) => {
 // --- LOCAL BROWSER MOCK SYSTEM (FALLBACK MECHANISM) ---
 // Enables complete frontend operations even if the Google Sheets Web App is not yet deployed.
 
-import schemasAndSeeds from '../db_schemas/schemas_and_seeds.json';
-
 const getLocalMockDb = () => {
   const stored = localStorage.getItem('wlOpsv3_mock_db');
   let db;
@@ -280,6 +423,21 @@ const getLocalMockDb = () => {
       { log_id: 'LOG-000004', timestamp: '2026-05-18T09:00:00.000Z', event_type: 'Fleet Status Change', asset_id: 'WL-HV-0008', location: 'Thilafushi', triggered_by_email: 'supervisor@welllandops.com', notes: 'PC350 Excavator grounded — hydraulic failure reported' },
       { log_id: 'LOG-000005', timestamp: '2026-05-20T11:30:00.000Z', event_type: 'Inventory Receipt', asset_id: 'WL-MV-0001', location: 'Thilafushi', triggered_by_email: 'procurement@welllandops.com', notes: '10 units Engine Oil 15W40 received and logged to Thilafushi depot' }
     ];
+    localStorage.setItem('wlOpsv3_mock_db', JSON.stringify(db));
+  }
+
+  if (!db.Sheet_Audit_Log || db.Sheet_Audit_Log.length === 0) {
+    db.Sheet_Audit_Log = schemasAndSeeds.Sheet_Audit_Log || [];
+    localStorage.setItem('wlOpsv3_mock_db', JSON.stringify(db));
+  }
+
+  if (!db.Sheet_Locations || db.Sheet_Locations.length === 0) {
+    db.Sheet_Locations = schemasAndSeeds.Sheet_Locations || [];
+    localStorage.setItem('wlOpsv3_mock_db', JSON.stringify(db));
+  }
+
+  if (!db.Sheet_Issue_Tickets || db.Sheet_Issue_Tickets.length === 0) {
+    db.Sheet_Issue_Tickets = schemasAndSeeds.Sheet_Issue_Tickets || [];
     localStorage.setItem('wlOpsv3_mock_db', JSON.stringify(db));
   }
 
@@ -390,7 +548,10 @@ const handleMockRequest = async (action, data) => {
       inventoryLedger: db.Sheet_Inventory_Ledger || [],
       crmAgreements: db.Sheet_CRM_Agreements || [],
       financeLedger: db.Sheet_Finance_Ledger || [],
-      assetHistoryLog: db.Sheet_Asset_History_Log || []
+      assetHistoryLog: db.Sheet_Asset_History_Log || [],
+      auditLog: db.Sheet_Audit_Log || [],
+      locations: db.Sheet_Locations || [],
+      issueTickets: db.Sheet_Issue_Tickets || []
     };
   }
   
@@ -398,6 +559,76 @@ const handleMockRequest = async (action, data) => {
     const { tableName, pkName, pkValue, record } = data;
     updateMockRecordLocal(tableName, pkName, pkValue, record);
     return { status: "Success", action: "Mocked Sync" };
+  }
+
+  if (action === 'entityUpdateCurrent') {
+    const { tableName, pkName, pkValue, record } = data;
+    updateMockRecordLocal(tableName, pkName, pkValue, record);
+    return { status: 'Success', action: 'Entity Current Update', entityType: data.entityType, entityId: pkValue };
+  }
+
+  if (action === 'notifyHighSeverityIssue') {
+    return {
+      status: 'Success',
+      action: 'High Severity Ticket Notification',
+      ticketId: data.ticket?.ticket_id,
+      mocked: true
+    };
+  }
+
+  if (action === 'entityCorrectHistorical') {
+    const { entityType, tableName, pkName, pkValue, patch, correctionMeta } = data;
+    if (!correctionMeta?.correction_reason || !correctionMeta?.effective_date) {
+      throw new Error('Historical correction requires correction_reason and effective_date.');
+    }
+    const list = db[tableName] || [];
+    const idx = list.findIndex(row => row[pkName]?.toString() === pkValue?.toString());
+    if (idx === -1) throw new Error(`Entity not found for correction: ${entityType} ${pkValue}`);
+    const oldValue = { ...list[idx] };
+    const newValue = { ...oldValue, ...patch };
+    db.Sheet_Audit_Log = db.Sheet_Audit_Log || [];
+    const auditRecord = createAuditRecord({
+      type: entityType,
+      id: pkValue,
+      action: 'Historical Correction',
+      oldValue,
+      newValue,
+      correctionMeta
+    });
+    db.Sheet_Audit_Log.push(auditRecord);
+    list[idx] = newValue;
+    db[tableName] = list;
+    saveLocalMockDb(db);
+    return { status: 'Success', action: 'Historical Correction', auditId: auditRecord.audit_id, entityType, entityId: pkValue };
+  }
+
+  if (action === 'entitySoftDelete') {
+    const { entityType, tableName, pkName, pkValue, reason } = data;
+    const list = db[tableName] || [];
+    const idx = list.findIndex(row => row[pkName]?.toString() === pkValue?.toString());
+    if (idx === -1) throw new Error(`Entity not found for soft delete: ${entityType} ${pkValue}`);
+    const row = list[idx];
+    if ('status' in row) row.status = 'Inactive';
+    else if ('live_status' in row) row.live_status = 'Inactive';
+    else if ('payment_clearance_status' in row) row.payment_clearance_status = 'Inactive';
+    else row.status = 'Inactive';
+    row.deactivation_reason = reason;
+    saveLocalMockDb(db);
+    return { status: 'Success', action: 'Soft Delete', entityType, entityId: pkValue };
+  }
+
+  if (action === 'entityRestore') {
+    const { entityType, tableName, pkName, pkValue } = data;
+    const list = db[tableName] || [];
+    const idx = list.findIndex(row => row[pkName]?.toString() === pkValue?.toString());
+    if (idx === -1) throw new Error(`Entity not found for restore: ${entityType} ${pkValue}`);
+    const row = list[idx];
+    if ('status' in row) row.status = 'Active';
+    else if ('live_status' in row) row.live_status = 'Active';
+    else if ('payment_clearance_status' in row) row.payment_clearance_status = 'Awaiting Action';
+    else row.status = 'Active';
+    saveLocalMockDb(db);
+    return { status: 'Success', action: 'Restore', entityType, entityId: pkValue };
   }
   
   if (action === 'uploadQuote') {

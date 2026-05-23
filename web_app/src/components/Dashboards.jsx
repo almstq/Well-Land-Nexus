@@ -8,6 +8,13 @@ import {
   Briefcase, ArrowRight, ChevronDown, ChevronUp, ExternalLink, AlertOctagon
 } from 'lucide-react';
 import * as api from '../services/api';
+import EntityCard from './entities/EntityCard';
+import EntityForm from './entities/EntityForm';
+
+const MASTER_ADMIN_EMAIL = 'alie.mustarq@gmail.com';
+const CARD_CLASS = 'bg-white border border-slate-200 rounded-lg shadow-sm p-6';
+const BUTTON_CLASS = 'px-3.5 py-2 rounded-lg font-bold transition hover:bg-slate-100 active:scale-95';
+const TABLE_ROW_CLASS = 'border-b border-slate-200 odd:bg-white even:bg-slate-50/70 hover:bg-emerald-50/50 transition';
 
 // MD3 Badge Utilities
 const getInventoryBadge = (qty) => {
@@ -48,7 +55,31 @@ const normalizeFinanceEntry = (entry) => {
   };
 };
 
-export default function Dashboards({ role, userEmail, onLogout }) {
+function RequireRole({ allowedRole, sessionRole, viewRole, userEmail, children }) {
+  const isMasterAdmin = userEmail === MASTER_ADMIN_EMAIL && sessionRole === 'Admin';
+  const isOwnWorkspace = allowedRole === 'Admin'
+    ? isMasterAdmin && viewRole === 'Admin'
+    : sessionRole === allowedRole && viewRole === allowedRole;
+  const isMasterPreview = isMasterAdmin && viewRole === allowedRole;
+
+  if (isOwnWorkspace || isMasterPreview) return children;
+
+  return (
+    <div className={CARD_CLASS}>
+      <div className="flex items-start gap-3">
+        <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+        <div>
+          <h3 className="text-base font-extrabold text-slate-950">Workspace Access Blocked</h3>
+          <p className="text-sm text-slate-600 mt-1">
+            Your authenticated role is <span className="font-bold">{sessionRole}</span>. This workspace requires <span className="font-bold">{allowedRole}</span>.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function Dashboards({ role, sessionRole, userEmail, onLogout }) {
   const [db, setDb] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -157,11 +188,31 @@ export default function Dashboards({ role, userEmail, onLogout }) {
           exit={{ opacity: 0, y: -15 }}
           transition={{ duration: 0.25 }}
         >
-          {role === 'Admin' && <AdminDashboard db={db} onRefresh={reloadData} showToast={showToast} userEmail={userEmail} />}
-          {role === 'Supervisor' && <SupervisorDashboard db={db} onRefresh={reloadData} showToast={showToast} />}
-          {role === 'Procurement' && <ProcurementDashboard db={db} onRefresh={reloadData} showToast={showToast} />}
-          {role === 'Finance' && <FinanceDashboard db={db} onRefresh={reloadData} showToast={showToast} />}
-          {role === 'Requestee' && <RequesteeDashboard db={db} onRefresh={reloadData} showToast={showToast} />}
+          {role === 'Admin' && (
+            <RequireRole allowedRole="Admin" sessionRole={sessionRole} viewRole={role} userEmail={userEmail}>
+              <AdminDashboard db={db} onRefresh={reloadData} showToast={showToast} userEmail={userEmail} />
+            </RequireRole>
+          )}
+          {role === 'Supervisor' && (
+            <RequireRole allowedRole="Supervisor" sessionRole={sessionRole} viewRole={role} userEmail={userEmail}>
+              <SupervisorDashboard db={db} onRefresh={reloadData} showToast={showToast} />
+            </RequireRole>
+          )}
+          {role === 'Procurement' && (
+            <RequireRole allowedRole="Procurement" sessionRole={sessionRole} viewRole={role} userEmail={userEmail}>
+              <ProcurementDashboard db={db} onRefresh={reloadData} showToast={showToast} />
+            </RequireRole>
+          )}
+          {role === 'Finance' && (
+            <RequireRole allowedRole="Finance" sessionRole={sessionRole} viewRole={role} userEmail={userEmail}>
+              <FinanceDashboard db={db} onRefresh={reloadData} showToast={showToast} />
+            </RequireRole>
+          )}
+          {role === 'Requestee' && (
+            <RequireRole allowedRole="Requestee" sessionRole={sessionRole} viewRole={role} userEmail={userEmail}>
+              <RequesteeDashboard db={db} onRefresh={reloadData} showToast={showToast} />
+            </RequireRole>
+          )}
         </motion.div>
       </AnimatePresence>
     </div>
@@ -178,7 +229,11 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
   const [finance, setFinance] = useState(db.financeLedger || []);
   const [assetHistoryLog] = useState(db.assetHistoryLog || []);
   const [fleetAssets] = useState(db.assetsFleet || []);
-  const [activeTab, setActiveTab] = useState('fleet');
+  const [locations] = useState(db.locations || []);
+  const [issueTickets, setIssueTickets] = useState(db.issueTickets || []);
+  const [activeTab, setActiveTab] = useState('users');
+  const [ticketLocationFilter, setTicketLocationFilter] = useState('All');
+  const [ticketAssetFilter, setTicketAssetFilter] = useState('All');
 
   // Inline edit — fleet assets
   const [editingAssetId, setEditingAssetId] = useState(null);
@@ -315,6 +370,35 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
     }
   };
 
+  const handleIssueTicketSubmit = async (ticket) => {
+    try {
+      const res = await api.raiseIssueTicket(ticket);
+      setIssueTickets(current => [...current, ticket]);
+      showToast(res.notificationTriggered
+        ? `High severity ticket ${ticket.ticket_id} raised and notification queued.`
+        : `Ticket ${ticket.ticket_id} raised and linked to ${ticket.asset_id}.`);
+      onRefresh();
+    } catch (err) {
+      showToast('Ticket submission failed: ' + err.message, 'error');
+    }
+  };
+
+  const handleResolveTicket = async (ticket) => {
+    try {
+      const patch = {
+        status: 'Resolved',
+        updated_at: new Date().toISOString(),
+        resolved_at: new Date().toISOString()
+      };
+      await api.entityCrud.updateCurrent('issue_ticket', ticket.ticket_id, patch);
+      setIssueTickets(current => current.map(row => row.ticket_id === ticket.ticket_id ? { ...row, ...patch } : row));
+      showToast(`Ticket ${ticket.ticket_id} resolved and written to the audit log.`);
+      onRefresh();
+    } catch (err) {
+      showToast('Ticket update failed: ' + err.message, 'error');
+    }
+  };
+
   const handleBackfillRetroactivePR = async (e) => {
     e.preventDefault();
     if (!retroDate || !retroItem || !retroAssetBase || !retroSupplier || !retroPrice) {
@@ -422,34 +506,52 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
       }
     }
   });
+  const openTickets = issueTickets.filter(ticket => ticket.status !== 'Resolved');
+  const filteredTickets = issueTickets.filter(ticket => {
+    const locationMatch = ticketLocationFilter === 'All' || ticket.location_id === ticketLocationFilter;
+    const assetMatch = ticketAssetFilter === 'All' || ticket.asset_id === ticketAssetFilter;
+    return locationMatch && assetMatch;
+  });
+  const appsScriptUrl = api.getAppsScriptUrl();
+  const adminNavItems = [
+    { id: 'users', label: 'User Management', icon: Users, hint: `${users.length} profiles` },
+    { id: 'fleet', label: 'Asset Oversight', icon: Truck, hint: `${fleetAssets.length} assets` },
+    { id: 'tickets', label: 'Ticket Board', icon: AlertOctagon, hint: `${openTickets.length} open` },
+    { id: 'finance', label: 'Finance Matrix', icon: DollarSign, hint: `${normalizedFinance.length} ledger rows` },
+    { id: 'reports', label: 'Logs & Reports', icon: BarChart2, hint: `${sortedHistoryLog.length} events` },
+    { id: 'system', label: 'System Health', icon: Activity, hint: appsScriptUrl ? 'Apps Script linked' : 'Mock fallback' },
+    { id: 'masterdata', label: 'Atomic Seed', icon: Terminal, hint: 'High priority' }
+  ];
 
   return (
-    <div className="space-y-6">
-      {/* Tab Navigation */}
-      <div className="flex border-b border-gray-100 space-x-2 md:space-x-4 overflow-x-auto pb-1">
-        {[
-          { id: 'fleet', label: 'Fleet Map & Shifts', icon: MapPin },
-          { id: 'approvals', label: 'Double-Gate Console', icon: CheckCircle },
-          { id: 'finance', label: 'Finance & CRM Matrix', icon: DollarSign },
-          { id: 'users', label: 'Permissions Matrix', icon: Settings },
-          { id: 'reports', label: 'Reporting Suite', icon: BarChart2 },
-          ...(isCRMUser ? [{ id: 'crm', label: 'CRM Sales Desk', icon: Briefcase }] : []),
-          ...(userEmail === 'alie.mustarq@gmail.com' ? [{ id: 'masterdata', label: 'Master Data [IT]', icon: Terminal }] : [])
-        ].map(t => (
-          <button
-            key={t.id}
-            onClick={() => setActiveTab(t.id)}
-            className={`flex items-center gap-1.5 pb-3 px-3 text-xs md:text-sm font-bold border-b-2 transition whitespace-nowrap ${
-              activeTab === t.id 
-                ? 'border-primary text-primary' 
-                : 'border-transparent text-textMuted hover:text-on-surface'
-            }`}
-          >
-            <t.icon className="w-4 h-4" />
-            {t.label}
-          </button>
-        ))}
-      </div>
+    <div className="grid grid-cols-1 lg:grid-cols-[260px_minmax(0,1fr)] gap-6">
+      <aside className={CARD_CLASS}>
+        <div className="border-b border-slate-200 pb-4 mb-4">
+          <span className="text-[10px] uppercase tracking-widest font-black text-emerald-700">Master Console</span>
+          <h3 className="text-lg font-extrabold text-slate-950 mt-1">Admin Portal</h3>
+          <p className="text-xs text-slate-500 mt-1">RBAC, assets, ledgers and system controls.</p>
+        </div>
+        <nav className="space-y-1">
+          {adminNavItems.map(item => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActiveTab(item.id)}
+              className={`w-full p-3 rounded-lg border text-left transition active:scale-[0.99] ${
+                activeTab === item.id
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                  : 'bg-white border-transparent text-slate-600 hover:bg-slate-50 hover:border-slate-200'
+              }`}
+            >
+              <span className="flex items-center gap-2 text-xs font-extrabold">
+                <item.icon className="w-4 h-4" />
+                {item.label}
+              </span>
+              <span className="text-[10px] text-slate-500 block mt-1">{item.hint}</span>
+            </button>
+          ))}
+        </nav>
+      </aside>
 
       {/* Tab Content */}
       <AnimatePresence mode="wait">
@@ -459,6 +561,7 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.15 }}
+          className="min-w-0"
         >
           
           {/* TAB 1: OPERATIONS & FLEET MAP */}
@@ -469,63 +572,99 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
                 <span className="text-xs bg-primary/10 text-primary font-bold px-3 py-1 rounded-full border border-primary/20">4 Vessels | 20 Machinery</span>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {(db.assetsFleet || []).map(a => {
-                  const isGrounded = a.live_status.toLowerCase().includes('grounded');
-                  return (
-                    <div 
-                      key={a.asset_id}
-                      className={`bg-white rounded-xl shadow-sm border border-gray-100 p-6 transition relative overflow-hidden ${
-                        isGrounded 
-                          ? 'bg-red-50/70 border-red-200' 
-                          : 'bg-white/80 border-gray-100 shadow-sm'
-                      } hover:shadow-md`}
-                    >
-                      {isGrounded && (
-                        <div className="absolute top-0 right-0 bg-red-600 text-white font-extrabold text-[9px] uppercase px-3 py-0.5 rounded-bl">Grounded Warning</div>
-                      )}
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <span className="text-[10px] font-extrabold uppercase text-textMuted tracking-wider">{a.type}</span>
-                          <h4 className="text-base font-extrabold text-on-surface mt-0.5">{a.asset_name}</h4>
-                          <span className="text-xs font-bold text-primary">{a.asset_id}</span>
-                        </div>
-                        {getStatusBadge(a.live_status)}
-                      </div>
-                      
-                      <div className="mt-4 pt-3 border-t border-dashed border-gray-100 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
-                        <div>
-                          <span className="text-textMuted font-medium">Site Location:</span>
-                          <p className="font-extrabold text-on-surface flex items-center gap-1 mt-0.5">
-                            <MapPin className="w-3.5 h-3.5 text-red-500" /> {a.location}
-                          </p>
-                        </div>
-                        <div>
-                          <span className="text-textMuted font-medium">Meter Hours:</span>
-                          <p className="font-extrabold text-on-surface mt-0.5 flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5 text-primary" /> {a.meter_hours} hrs
-                          </p>
-                        </div>
-                        <div className="col-span-2 mt-1">
-                          <span className="text-textMuted font-medium">Active Operator Profile:</span>
-                          <p className="font-extrabold text-on-surface mt-0.5 flex items-center gap-1">
-                            <User className="w-3.5 h-3.5 text-secondary" /> {a.current_operator || '—'}
-                          </p>
-                        </div>
-                      </div>
+                {(db.assetsFleet || []).map(a => (
+                  <div key={a.asset_id} className="space-y-2">
+                    <EntityCard data={a} type="fleet" db={{ ...db, issueTickets }} />
+                    <div className="flex flex-wrap items-center gap-2 text-xs px-1">
+                      <span className="font-bold text-slate-600 flex items-center gap-1">
+                        <MapPin className="w-3.5 h-3.5 text-red-500" /> {a.location}
+                      </span>
+                      <span className="font-bold text-slate-600 flex items-center gap-1">
+                        <User className="w-3.5 h-3.5 text-secondary" /> {a.current_operator || 'No operator'}
+                      </span>
                       {a.maps_coordinates && (
                         <a
                           href={`http://maps.google.com/?q=${a.maps_coordinates}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-3 flex items-center gap-1.5 text-[10px] font-bold text-primary hover:text-primary-dark border border-primary/30 bg-primary/5 hover:bg-primary/10 rounded-lg px-3 py-1.5 transition w-fit"
+                          className="font-extrabold text-primary hover:text-primary-dark flex items-center gap-1"
                           onClick={e => e.stopPropagation()}
                         >
-                          <ExternalLink className="w-3 h-3" /> View on Google Maps
+                          <ExternalLink className="w-3 h-3" /> Maps
                         </a>
                       )}
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* TAB: ISSUE TICKET BOARD */}
+          {activeTab === 'tickets' && (
+            <div className="space-y-6">
+              <EntityForm type="issue_ticket" db={{ ...db, locations, issueTickets }} userEmail={userEmail} onSubmit={handleIssueTicketSubmit} />
+
+              <div className={CARD_CLASS}>
+                <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-slate-200 pb-4">
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-950 flex items-center gap-2">
+                      <AlertOctagon className="w-4 h-4 text-red-700" /> Ticket Board
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1">Open issues linked to locations, fleet assets, inventory needs, history, and audit trails.</p>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <select className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold" value={ticketLocationFilter} onChange={e => setTicketLocationFilter(e.target.value)}>
+                      <option value="All">All locations</option>
+                      {locations.map(location => <option key={location.location_id} value={location.location_id}>{location.location_name}</option>)}
+                    </select>
+                    <select className="rounded-lg border border-slate-200 px-3 py-2 text-xs font-bold" value={ticketAssetFilter} onChange={e => setTicketAssetFilter(e.target.value)}>
+                      <option value="All">All assets</option>
+                      {fleetAssets.map(asset => <option key={asset.asset_id} value={asset.asset_id}>{asset.asset_name}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+                  {filteredTickets.map(ticket => {
+                    const asset = fleetAssets.find(row => row.asset_id === ticket.asset_id);
+                    const location = locations.find(row => row.location_id === ticket.location_id);
+                    const items = (() => {
+                      try { return JSON.parse(ticket.items_required_json || '[]'); } catch { return []; }
+                    })();
+                    return (
+                      <div key={ticket.ticket_id} className="rounded-lg border border-slate-200 bg-slate-50 p-4 space-y-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <span className="text-[10px] uppercase tracking-widest font-black text-slate-500">{ticket.ticket_id}</span>
+                            <h4 className="text-sm font-extrabold text-slate-950 mt-1">{asset?.asset_name || ticket.asset_id}</h4>
+                            <p className="text-xs font-bold text-slate-500 mt-0.5">{location?.location_name || ticket.location_id}</p>
+                          </div>
+                          <div className="text-right space-y-1">
+                            {getStatusBadge(ticket.status)}
+                            <span className={`block px-2 py-1 rounded-full border text-[10px] font-extrabold ${
+                              ticket.severity === 'High' ? 'bg-red-50 border-red-200 text-red-800' : ticket.severity === 'Medium' ? 'bg-amber-50 border-amber-200 text-amber-800' : 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                            }`}>{ticket.severity}</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-slate-700 font-semibold leading-relaxed">{ticket.description}</p>
+                        <div className="text-[10px] text-slate-500 font-bold space-y-1">
+                          <p>Raised by: {ticket.raised_by_email}</p>
+                          <p>Reported by: {ticket.reported_by_id}</p>
+                          <p>Items: {items.length ? items.join(', ') : 'No inventory items selected'}</p>
+                        </div>
+                        {ticket.status !== 'Resolved' && (
+                          <button onClick={() => handleResolveTicket(ticket)} className="w-full px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold active:scale-95">
+                            Mark Resolved
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {filteredTickets.length === 0 && (
+                    <p className="text-xs text-slate-500 font-semibold italic">No tickets match the selected filters.</p>
+                  )}
+                </div>
               </div>
             </div>
           )}
@@ -1211,6 +1350,67 @@ function AdminDashboard({ db, onRefresh, showToast, userEmail }) {
               </div>
             );
           })()}
+
+          {/* TAB 6: SYSTEM HEALTH */}
+          {activeTab === 'system' && (
+            <div className="space-y-6">
+              <div className={CARD_CLASS}>
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-4">
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-950 flex items-center gap-2">
+                      <Activity className="w-4 h-4 text-emerald-700" /> Frontend / Code.gs Synchronization
+                    </h3>
+                    <p className="text-xs text-slate-500 mt-1">Operational monitor for schema availability, transport mode, and local data health.</p>
+                  </div>
+                  <button onClick={onRefresh} className={`${BUTTON_CLASS} bg-slate-900 text-white hover:bg-slate-800 text-xs flex items-center gap-1.5`}>
+                    <RefreshCw className="w-3.5 h-3.5" /> Run Sync Check
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5">
+                  {[
+                    { label: 'Transport Mode', value: appsScriptUrl ? 'Apps Script Web App' : 'Local Mock Fallback', tone: appsScriptUrl ? 'emerald' : 'amber' },
+                    { label: 'Backend URL', value: appsScriptUrl || 'Not configured in VITE_GOOGLE_APPS_SCRIPT_URL', tone: appsScriptUrl ? 'emerald' : 'amber' },
+                    { label: 'Registered Users', value: users.length, tone: 'slate' },
+                    { label: 'Fleet Assets', value: fleetAssets.length, tone: 'slate' },
+                    { label: 'Locations', value: locations.length, tone: 'slate' },
+                    { label: 'Issue Tickets', value: issueTickets.length, tone: openTickets.length ? 'amber' : 'slate' },
+                    { label: 'Finance Rows', value: normalizedFinance.length, tone: 'slate' },
+                    { label: 'History Events', value: sortedHistoryLog.length, tone: 'slate' }
+                  ].map(item => (
+                    <div key={item.label} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+                      <span className="text-[10px] uppercase font-black tracking-widest text-slate-500">{item.label}</span>
+                      <p className={`text-sm font-extrabold mt-1 break-words ${
+                        item.tone === 'emerald' ? 'text-emerald-700' : item.tone === 'amber' ? 'text-amber-700' : 'text-slate-950'
+                      }`}>{item.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className={CARD_CLASS}>
+                <h3 className="text-base font-extrabold text-slate-950 mb-3">Schema Contract Coverage</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+                  {[
+                    ['User Registry', users.length],
+                    ['Assets Fleet', fleetAssets.length],
+                    ['Purchase Requests', prRequests.length],
+                    ['Supplier Matrix', matrix.length],
+                    ['Finance Ledger', normalizedFinance.length],
+                    ['CRM Agreements', agreements.length],
+                    ['Locations', locations.length],
+                    ['Issue Tickets', issueTickets.length],
+                    ['History Log', sortedHistoryLog.length]
+                  ].map(([label, count]) => (
+                    <div key={label} className="flex items-center justify-between rounded-lg border border-slate-200 px-3 py-2">
+                      <span className="font-bold text-slate-600">{label}</span>
+                      <span className="font-extrabold text-slate-950">{count}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* TAB 6: UNIVERSAL MASTER DATA MANAGER — IT ADMIN ONLY */}
           {activeTab === 'masterdata' && userEmail === 'alie.mustarq@gmail.com' && (

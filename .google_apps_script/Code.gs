@@ -20,6 +20,9 @@ var SHEET_HEADERS = {
   Sheet_Item_Supplier_Matrix: ["generic_item_id", "supplier_name", "extracted_sku_name", "quoted_price_mvr", "quote_date", "price_variance_percentage", "po_reference"],
   Sheet_Finance_Ledger: ["transaction_id", "reference_id", "reference_type", "ledger_type", "counterparty_name", "total_amount_mvr", "antrac_submission_timestamp", "payment_clearance_status", "bank_reference_number", "cleared_by_finance_email"],
   Sheet_Asset_History_Log: ["log_id", "timestamp", "event_type", "asset_id", "location", "triggered_by_email", "notes"],
+  Sheet_Audit_Log: ["audit_id", "timestamp", "entity_type", "entity_id", "action", "old_value_json", "new_value_json", "effective_date", "corrected_by_email", "correction_reason", "affected_records_json"],
+  Sheet_Locations: ["location_id", "location_name", "location_type", "status", "maps_coordinates"],
+  Sheet_Issue_Tickets: ["ticket_id", "raised_by_email", "reported_by_id", "location_id", "asset_id", "items_required_json", "status", "severity", "description", "created_at", "updated_at", "resolved_at"],
   Sheet_CRM_Agreements: ["agreement_id", "client_name", "asset_ids_array", "rate_structure", "billing_cycle", "start_date", "current_logged_hours", "status", "project_scope", "total_contract_value_mvr", "agreement_status", "billing_milestones"],
   Sheet_Inventory_Ledger: ["generic_item_id", "item_name", "quantity", "location_base"]
 };
@@ -38,6 +41,11 @@ function doPost(e) {
       submitPoToAntracFinance: handleSubmitPoToAntracFinance,
       clearPaymentHandshake: handleClearPaymentHandshake,
       seedDefaults: handleSeedDefaults,
+      entityUpdateCurrent: handleEntityUpdateCurrent,
+      entityCorrectHistorical: handleEntityCorrectHistorical,
+      entitySoftDelete: handleEntitySoftDelete,
+      entityRestore: handleEntityRestore,
+      notifyHighSeverityIssue: handleNotifyHighSeverityIssue,
       submitSourcingPackage: handleSubmitSourcingPackage,
       logHistoryEntry: handleLogHistoryEntry,
       backfillRetroactivePR: handleBackfillRetroactivePR,
@@ -174,12 +182,98 @@ function handleGetDatabase() {
     inventoryLedger: getSheetData(getOrCreateSheet("Sheet_Inventory_Ledger")),
     crmAgreements: getSheetData(getOrCreateSheet("Sheet_CRM_Agreements")),
     financeLedger: getSheetData(getOrCreateSheet("Sheet_Finance_Ledger")),
-    assetHistoryLog: getSheetData(getOrCreateSheet("Sheet_Asset_History_Log"))
+    assetHistoryLog: getSheetData(getOrCreateSheet("Sheet_Asset_History_Log")),
+    auditLog: getSheetData(getOrCreateSheet("Sheet_Audit_Log")),
+    locations: getSheetData(getOrCreateSheet("Sheet_Locations")),
+    issueTickets: getSheetData(getOrCreateSheet("Sheet_Issue_Tickets"))
   });
 }
 
 function handleUpdateRecord(requestData) {
   return jsonResponse(updateObject(requestData.tableName, requestData.pkName, requestData.pkValue, requestData.record || {}));
+}
+
+function handleEntityUpdateCurrent(requestData) {
+  var result = updateObject(requestData.tableName, requestData.pkName, requestData.pkValue, requestData.record || {});
+  return jsonResponse(result);
+}
+
+function handleNotifyHighSeverityIssue(requestData) {
+  var ticket = requestData.ticket || {};
+  if (ticket.severity !== "High") return jsonResponse({ status: "Skipped", reason: "Ticket severity is not High" });
+  var subject = "High Severity Well Land Ticket: " + (ticket.ticket_id || "New Ticket");
+  var body = [
+    "High severity issue ticket raised.",
+    "",
+    "Ticket: " + (ticket.ticket_id || ""),
+    "Asset: " + (ticket.asset_id || ""),
+    "Location: " + (ticket.location_id || ""),
+    "Reported by: " + (ticket.reported_by_id || ticket.raised_by_email || ""),
+    "Description: " + (ticket.description || "")
+  ].join("\n");
+  MailApp.sendEmail("alie.mustarq@gmail.com", subject, body);
+  return jsonResponse({ status: "Success", action: "High Severity Ticket Notification", ticketId: ticket.ticket_id });
+}
+
+function handleEntityCorrectHistorical(requestData) {
+  var tableName = requestData.tableName;
+  var pkName = requestData.pkName;
+  var pkValue = requestData.pkValue;
+  var entityType = requestData.entityType;
+  var patch = requestData.patch || {};
+  var correctionMeta = requestData.correctionMeta || {};
+  if (!correctionMeta.correction_reason || !correctionMeta.effective_date) {
+    throw new Error("Historical correction requires correction_reason and effective_date.");
+  }
+
+  var oldValue = findRow(tableName, pkName, pkValue);
+  if (!oldValue) throw new Error("Entity not found for correction: " + entityType + " " + pkValue);
+  var newValue = Object.assign({}, oldValue, patch);
+  var auditId = makeId("AUD");
+
+  appendObject("Sheet_Audit_Log", {
+    audit_id: auditId,
+    timestamp: new Date(),
+    entity_type: entityType,
+    entity_id: pkValue,
+    action: "Historical Correction",
+    old_value_json: JSON.stringify(oldValue),
+    new_value_json: JSON.stringify(newValue),
+    effective_date: correctionMeta.effective_date,
+    corrected_by_email: requestData.userEmail || correctionMeta.corrected_by_email || "",
+    correction_reason: correctionMeta.correction_reason,
+    affected_records_json: JSON.stringify(correctionMeta.affected_records || [])
+  });
+
+  updateObject(tableName, pkName, pkValue, newValue);
+  return jsonResponse({ status: "Success", action: "Historical Correction", auditId: auditId, entityType: entityType, entityId: pkValue });
+}
+
+function handleEntitySoftDelete(requestData) {
+  var oldValue = findRow(requestData.tableName, requestData.pkName, requestData.pkValue);
+  if (!oldValue) throw new Error("Entity not found for soft delete: " + requestData.pkValue);
+  var patch = {};
+  if (oldValue.status !== undefined) patch.status = "Inactive";
+  else if (oldValue.live_status !== undefined) patch.live_status = "Inactive";
+  else if (oldValue.payment_clearance_status !== undefined) patch.payment_clearance_status = "Inactive";
+  else patch.status = "Inactive";
+  patch.deactivation_reason = requestData.reason || "Soft delete requested";
+  var next = Object.assign({}, oldValue, patch);
+  updateObject(requestData.tableName, requestData.pkName, requestData.pkValue, next);
+  return jsonResponse({ status: "Success", action: "Soft Delete", entityType: requestData.entityType, entityId: requestData.pkValue });
+}
+
+function handleEntityRestore(requestData) {
+  var oldValue = findRow(requestData.tableName, requestData.pkName, requestData.pkValue);
+  if (!oldValue) throw new Error("Entity not found for restore: " + requestData.pkValue);
+  var patch = {};
+  if (oldValue.status !== undefined) patch.status = "Active";
+  else if (oldValue.live_status !== undefined) patch.live_status = "Active";
+  else if (oldValue.payment_clearance_status !== undefined) patch.payment_clearance_status = "Awaiting Action";
+  else patch.status = "Active";
+  var next = Object.assign({}, oldValue, patch);
+  updateObject(requestData.tableName, requestData.pkName, requestData.pkValue, next);
+  return jsonResponse({ status: "Success", action: "Restore", entityType: requestData.entityType, entityId: requestData.pkValue });
 }
 
 function handleUploadQuote(requestData) {
@@ -501,6 +595,27 @@ function handleSeedDefaults() {
   ].forEach(function(row) { getOrCreateSheet("Sheet_Assets_Fleet").appendRow(row); });
 
   [
+    ["LOC-THILAFUSHI", "Thilafushi", "Base Yard", "Active", "4.1734,73.4492"],
+    ["LOC-MUTHAAFUSHI", "Muthaafushi", "Project Site", "Active", "4.2156,73.5031"],
+    ["LOC-BODUFINOLHU", "Bodufinolhu", "Project Site", "Active", "3.8121,72.8456"]
+  ].forEach(function(row) { getOrCreateSheet("Sheet_Locations").appendRow(row); });
+
+  getOrCreateSheet("Sheet_Issue_Tickets").appendRow([
+    "TKT-000001",
+    "operator@welllandops.com",
+    "operator@welllandops.com",
+    "LOC-THILAFUSHI",
+    "WL-HV-0008",
+    "[\"Excavator Bucket Teeth\"]",
+    "Open",
+    "High",
+    "Hydraulic leak reported during morning inspection; machine grounded until repair clearance.",
+    "2026-05-22T08:30:00.000Z",
+    "2026-05-22T08:30:00.000Z",
+    ""
+  ]);
+
+  [
     ["PR-0001", "Hydraulic control valve + hose - Hauler Dump Truck VOLVO A40G", "MRO / General", 1, "Required due to leakage on VOLVO A40G at Muthaafushi", "WL-HV-0002", "operator@welllandops.com", "Procurement Officer", "", "Request Received", "Corrective Maintenance"],
     ["PR-0002", "Excavator Bucket Teeth", "Heavy Machinery Parts", 6, "Replace worn out teeth on PC350 excavators at base", "WL-HV-0008", "operator@welllandops.com", "Procurement Officer", "", "PR_Approved", "Corrective Maintenance"],
     ["PR-0003", "Engine Oil 15W40 (20L)", "Consumables", 10, "Scheduled engine oil change for tugboat engines", "WL-MV-0001", "operator@welllandops.com", "Procurement Officer", "", "Completed", "Scheduled Consumable"]
@@ -523,7 +638,8 @@ function handleSeedDefaults() {
 
   getOrCreateSheet("Sheet_Finance_Ledger").appendRow(["TX-0001", "RA0003", "CRM", "CRM_REVENUE", "Evosun Maldives Pvt Ltd", 123012, "2026-04-15T12:00:00Z", "Paid & Cleared", "CRM-PAID-RA0003", "finance@welllandops.com"]);
   getOrCreateSheet("Sheet_Finance_Ledger").appendRow(["TX-0002", "PR-0003", "PR", "PROCUREMENT_EXPENSE", "Kashimaa Boat", 12500, "2026-05-15T12:00:00Z", "Paid & Cleared", "REF-BANK-99823", "finance@welllandops.com"]);
-  writeHistory("Seed Defaults", "SYSTEM", "", "alie.mustarq@gmail.com", "Initial 8-sheet configuration seeded.");
+  getOrCreateSheet("Sheet_Audit_Log").appendRow(["AUD-000001", new Date(), "system", "INITIAL_SCHEMA", "Schema Initialized", "{}", "{\"Sheet_Audit_Log\":\"enabled\"}", "2026-05-23", "alie.mustarq@gmail.com", "Initial audit ledger configuration for entity correction workflow.", "[]"]);
+  writeHistory("Seed Defaults", "SYSTEM", "", "alie.mustarq@gmail.com", "Initial entity, ticketing, and audit configuration seeded.");
 
   return jsonResponse({ status: "Success", message: "All Well Land Ops v3 sheets seeded." });
 }

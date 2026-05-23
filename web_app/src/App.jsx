@@ -7,10 +7,13 @@ import {
 } from 'lucide-react';
 import * as api from './services/api';
 import Dashboards from './components/Dashboards';
-import Layout from './components/Layout';
+import MainLayout from './components/Layout';
+
+const MASTER_ADMIN_EMAIL = 'alie.mustarq@gmail.com';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(null);
+  const [viewRole, setViewRole] = useState('');
   const [emailInput, setEmailInput] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState('');
@@ -20,6 +23,7 @@ export default function App() {
     const user = api.getSessionUser();
     if (user) {
       setCurrentUser(user);
+      setViewRole(user.role);
     }
   }, []);
 
@@ -32,6 +36,7 @@ export default function App() {
     try {
       const user = await api.authenticateUser(emailInput);
       setCurrentUser(user);
+      setViewRole(user.role);
     } catch (err) {
       setAuthError(err.message);
     } finally {
@@ -42,15 +47,14 @@ export default function App() {
   const handleLogout = () => {
     api.setSessionUser(null);
     setCurrentUser(null);
+    setViewRole('');
     setEmailInput('');
   };
 
-  // Immediate Developer bypass switcher (instantly swaps roles for visual review)
+  // Master-admin preview switcher. This never mutates the authenticated session role.
   const handleRoleSwap = (newRole) => {
-    if (!currentUser) return;
-    const updatedUser = { ...currentUser, role: newRole };
-    api.setSessionUser(updatedUser);
-    setCurrentUser(updatedUser);
+    if (currentUser?.email !== MASTER_ADMIN_EMAIL) return;
+    setViewRole(newRole);
   };
 
   const handleQuickLogin = async (email) => {
@@ -60,6 +64,7 @@ export default function App() {
     try {
       const user = await api.authenticateUser(email);
       setCurrentUser(user);
+      setViewRole(user.role);
     } catch (err) {
       setAuthError(err.message);
     } finally {
@@ -71,7 +76,7 @@ export default function App() {
     <div className="min-h-screen bg-surface text-on-surface flex flex-col font-sans transition-colors duration-300">
       
       {/* 1. DEVELOPER BYPASS PANEL — visible only to privileged accounts */}
-      {currentUser && (currentUser.email === 'alie.mustarq@gmail.com' || currentUser.email === 'gm@welllandinvestment.com') && (
+      {currentUser && currentUser.email === MASTER_ADMIN_EMAIL && (
         <div className="z-40 bg-primary-dark text-white shadow-md border-b border-white/10 premium-glass-dark">
           <div className="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -101,7 +106,7 @@ export default function App() {
                   key={item.id}
                   onClick={() => handleRoleSwap(item.id)}
                   className={`px-2 py-1 rounded text-[10px] font-extrabold transition-all border ${
-                    currentUser.role === item.id 
+                    viewRole === item.id 
                       ? 'bg-white text-primary-dark border-white shadow-sm scale-105 font-black' 
                       : 'bg-transparent text-white/80 border-white/20 hover:bg-white/10'
                   }`}
@@ -262,13 +267,20 @@ export default function App() {
         </div>
       ) : (
         
-        <Layout currentUser={currentUser} onLogout={handleLogout}>
+        <MainLayout
+          currentUser={currentUser}
+          activeRole={viewRole || currentUser.role}
+          canImpersonate={currentUser.email === MASTER_ADMIN_EMAIL}
+          onRolePreviewChange={setViewRole}
+          onLogout={handleLogout}
+        >
           <Dashboards
-            role={currentUser.role}
+            role={viewRole || currentUser.role}
+            sessionRole={currentUser.role}
             userEmail={currentUser.email}
             onLogout={handleLogout}
           />
-        </Layout>
+        </MainLayout>
       )}
 
     </div>
